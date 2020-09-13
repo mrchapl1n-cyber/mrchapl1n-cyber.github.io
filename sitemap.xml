@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>http://192.168.1.191/blog/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/categories/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/hackthebox/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/categories/hackthebox/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/http/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/linux/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/blog/nibbles/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/privesc/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/spidering/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/tty/</loc>
+    <lastmod>2020-09-04T12:40:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/apache/</loc>
+    <lastmod>2020-07-29T08:55:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/blog/jerry/</loc>
+    <lastmod>2020-07-29T08:55:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/misconfiguration/</loc>
+    <lastmod>2020-07-29T08:55:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/tty-shell/</loc>
+    <lastmod>2020-07-29T08:55:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/windows/</loc>
+    <lastmod>2020-07-29T08:55:03+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/blog/devel/</loc>
+    <lastmod>2020-07-23T16:21:22+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/exploit-compilation/</loc>
+    <lastmod>2020-07-23T16:21:22+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/ftp/</loc>
+    <lastmod>2020-07-23T16:21:22+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/web-shell/</loc>
+    <lastmod>2020-07-23T16:21:22+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/blog/blue/</loc>
+    <lastmod>2020-07-11T10:48:40+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/eternalblue/</loc>
+    <lastmod>2020-07-11T10:48:40+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/exploit-modification/</loc>
+    <lastmod>2020-07-11T10:48:40+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/smb/</loc>
+    <lastmod>2020-07-11T10:48:40+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/tags/distcc/</loc>
+    <lastmod>2020-06-24T19:42:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/blog/lame/</loc>
+    <lastmod>2020-06-24T19:42:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/blog/legacy/</loc>
+    <lastmod>2020-06-03T11:07:10+06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/faq/</loc>
+    <lastmod>2020-03-23T13:05:29+06:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/project/detect-2019/</loc>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/author/</loc>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/about/</loc>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/contact/</loc>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/author/john-doe/</loc>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/author/mark-dinn/</loc>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/pricing/</loc>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/project/picade/</loc>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/service/</loc>
+  </url>
+  
+  <url>
+    <loc>http://192.168.1.191/project/</loc>
+  </url>
+  
+</urlset>

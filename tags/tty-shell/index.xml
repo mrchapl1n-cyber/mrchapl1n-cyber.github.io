@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tty Shell on Chapl1n</title>
+    <link>http://192.168.1.191/tags/tty-shell/</link>
+    <description>Recent content in Tty Shell on Chapl1n</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Copyright &amp;copy; 2020 [Themefisher](https://themefisher.com) All Rights Reserved</copyright>
+    <lastBuildDate>Wed, 29 Jul 2020 08:55:03 +0100</lastBuildDate>
+    
+	<atom:link href="http://192.168.1.191/tags/tty-shell/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Jerry HackTheBox - Write-Up</title>
+      <link>http://192.168.1.191/blog/jerry/</link>
+      <pubDate>Wed, 29 Jul 2020 08:55:03 +0100</pubDate>
+      
+      <guid>http://192.168.1.191/blog/jerry/</guid>
+      <description>This writeup will be my approach for pwning/rooting the HackTheBox machine called Jerry to obtain the user &amp;amp; root flags. It is considered to be an easy machine and suitable for beginners.</description>
+    </item>
+    
+    <item>
+      <title>Blue HackTheBox - Write-Up</title>
+      <link>http://192.168.1.191/blog/blue/</link>
+      <pubDate>Sat, 11 Jul 2020 10:48:40 +0100</pubDate>
+      
+      <guid>http://192.168.1.191/blog/blue/</guid>
+      <description>This blog piece details my approach for pwning the HackTheBox machine called Blue. As per usual for my HackTheBox writeups, I will try to pwn Blue with and without Metasploit.</description>
+    </item>
+    
+    <item>
+      <title>Lame HackTheBox - Write-Up</title>
+      <link>http://192.168.1.191/blog/lame/</link>
+      <pubDate>Wed, 24 Jun 2020 19:42:27 +0100</pubDate>
+      
+      <guid>http://192.168.1.191/blog/lame/</guid>
+      <description>This writeup will be my approach for pwning the HackTheBox machine called &amp;lsquo;Lame&amp;rsquo; and how I have learned new things along the way. The writeup will be in two sections - with and without Metasploit.</description>
+    </item>
+    
+  </channel>
+</rss>

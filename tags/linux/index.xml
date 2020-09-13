@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on Chapl1n</title>
+    <link>http://192.168.1.191/tags/linux/</link>
+    <description>Recent content in Linux on Chapl1n</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Copyright &amp;copy; 2020 [Themefisher](https://themefisher.com) All Rights Reserved</copyright>
+    <lastBuildDate>Fri, 04 Sep 2020 12:40:03 +0100</lastBuildDate>
+    
+	<atom:link href="http://192.168.1.191/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Nibbles HackTheBox - Write-Up</title>
+      <link>http://192.168.1.191/blog/nibbles/</link>
+      <pubDate>Fri, 04 Sep 2020 12:40:03 +0100</pubDate>
+      
+      <guid>http://192.168.1.191/blog/nibbles/</guid>
+      <description>This writeup will demonstrate my approach for pwning/rooting the HackTheBox machine called Nibbles to obtain the user &amp;amp; root flags. It is is considered to be an easy machine and suitable for beginners.</description>
+    </item>
+    
+    <item>
+      <title>Lame HackTheBox - Write-Up</title>
+      <link>http://192.168.1.191/blog/lame/</link>
+      <pubDate>Wed, 24 Jun 2020 19:42:27 +0100</pubDate>
+      
+      <guid>http://192.168.1.191/blog/lame/</guid>
+      <description>This writeup will be my approach for pwning the HackTheBox machine called &amp;lsquo;Lame&amp;rsquo; and how I have learned new things along the way. The writeup will be in two sections - with and without Metasploit.</description>
+    </item>
+    
+  </channel>
+</rss>

