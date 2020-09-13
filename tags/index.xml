@@ -2,166 +2,166 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Chapl1n</title>
-    <link>http://192.168.1.191/tags/</link>
+    <link>https://mrchapl1n-cyber.github.io/tags/</link>
     <description>Recent content in Tags on Chapl1n</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright &amp;copy; 2020 [Themefisher](https://themefisher.com) All Rights Reserved</copyright>
     <lastBuildDate>Fri, 04 Sep 2020 12:40:03 +0100</lastBuildDate>
     
-	<atom:link href="http://192.168.1.191/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://mrchapl1n-cyber.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>HackTheBox</title>
-      <link>http://192.168.1.191/tags/hackthebox/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/hackthebox/</link>
       <pubDate>Fri, 04 Sep 2020 12:40:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/hackthebox/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/hackthebox/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Http</title>
-      <link>http://192.168.1.191/tags/http/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/http/</link>
       <pubDate>Fri, 04 Sep 2020 12:40:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/http/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/http/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Linux</title>
-      <link>http://192.168.1.191/tags/linux/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/linux/</link>
       <pubDate>Fri, 04 Sep 2020 12:40:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/linux/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/linux/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Privesc</title>
-      <link>http://192.168.1.191/tags/privesc/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/privesc/</link>
       <pubDate>Fri, 04 Sep 2020 12:40:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/privesc/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/privesc/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Spidering</title>
-      <link>http://192.168.1.191/tags/spidering/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/spidering/</link>
       <pubDate>Fri, 04 Sep 2020 12:40:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/spidering/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/spidering/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Tty</title>
-      <link>http://192.168.1.191/tags/tty/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/tty/</link>
       <pubDate>Fri, 04 Sep 2020 12:40:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/tty/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/tty/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Apache</title>
-      <link>http://192.168.1.191/tags/apache/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/apache/</link>
       <pubDate>Wed, 29 Jul 2020 08:55:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/apache/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/apache/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Misconfiguration</title>
-      <link>http://192.168.1.191/tags/misconfiguration/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/misconfiguration/</link>
       <pubDate>Wed, 29 Jul 2020 08:55:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/misconfiguration/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/misconfiguration/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Tty Shell</title>
-      <link>http://192.168.1.191/tags/tty-shell/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/tty-shell/</link>
       <pubDate>Wed, 29 Jul 2020 08:55:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/tty-shell/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/tty-shell/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Windows</title>
-      <link>http://192.168.1.191/tags/windows/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/windows/</link>
       <pubDate>Wed, 29 Jul 2020 08:55:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/windows/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/windows/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Exploit compilation</title>
-      <link>http://192.168.1.191/tags/exploit-compilation/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/exploit-compilation/</link>
       <pubDate>Thu, 23 Jul 2020 16:21:22 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/exploit-compilation/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/exploit-compilation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Ftp</title>
-      <link>http://192.168.1.191/tags/ftp/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/ftp/</link>
       <pubDate>Thu, 23 Jul 2020 16:21:22 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/ftp/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/ftp/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Web Shell</title>
-      <link>http://192.168.1.191/tags/web-shell/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/web-shell/</link>
       <pubDate>Thu, 23 Jul 2020 16:21:22 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/web-shell/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/web-shell/</guid>
       <description></description>
     </item>
     
     <item>
       <title>EternalBlue</title>
-      <link>http://192.168.1.191/tags/eternalblue/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/eternalblue/</link>
       <pubDate>Sat, 11 Jul 2020 10:48:40 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/eternalblue/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/eternalblue/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Exploit Modification</title>
-      <link>http://192.168.1.191/tags/exploit-modification/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/exploit-modification/</link>
       <pubDate>Sat, 11 Jul 2020 10:48:40 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/exploit-modification/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/exploit-modification/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Smb</title>
-      <link>http://192.168.1.191/tags/smb/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/smb/</link>
       <pubDate>Sat, 11 Jul 2020 10:48:40 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/smb/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/smb/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Distcc</title>
-      <link>http://192.168.1.191/tags/distcc/</link>
+      <link>https://mrchapl1n-cyber.github.io/tags/distcc/</link>
       <pubDate>Wed, 24 Jun 2020 19:42:27 +0100</pubDate>
       
-      <guid>http://192.168.1.191/tags/distcc/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/tags/distcc/</guid>
       <description></description>
     </item>
     

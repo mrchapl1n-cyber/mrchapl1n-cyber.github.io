@@ -3,188 +3,159 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://192.168.1.191/blog/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/blog/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/categories/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/categories/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/hackthebox/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/hackthebox/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/categories/hackthebox/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/categories/hackthebox/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/http/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/http/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/linux/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/linux/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/blog/nibbles/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/blog/nibbles/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/privesc/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/privesc/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/spidering/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/spidering/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/tty/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/tty/</loc>
     <lastmod>2020-09-04T12:40:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/apache/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/apache/</loc>
     <lastmod>2020-07-29T08:55:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/blog/jerry/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/blog/jerry/</loc>
     <lastmod>2020-07-29T08:55:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/misconfiguration/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/misconfiguration/</loc>
     <lastmod>2020-07-29T08:55:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/tty-shell/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/tty-shell/</loc>
     <lastmod>2020-07-29T08:55:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/windows/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/windows/</loc>
     <lastmod>2020-07-29T08:55:03+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/blog/devel/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/blog/devel/</loc>
     <lastmod>2020-07-23T16:21:22+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/exploit-compilation/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/exploit-compilation/</loc>
     <lastmod>2020-07-23T16:21:22+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/ftp/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/ftp/</loc>
     <lastmod>2020-07-23T16:21:22+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/web-shell/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/web-shell/</loc>
     <lastmod>2020-07-23T16:21:22+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/blog/blue/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/blog/blue/</loc>
     <lastmod>2020-07-11T10:48:40+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/eternalblue/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/eternalblue/</loc>
     <lastmod>2020-07-11T10:48:40+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/exploit-modification/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/exploit-modification/</loc>
     <lastmod>2020-07-11T10:48:40+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/smb/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/smb/</loc>
     <lastmod>2020-07-11T10:48:40+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/tags/distcc/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/tags/distcc/</loc>
     <lastmod>2020-06-24T19:42:27+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/blog/lame/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/blog/lame/</loc>
     <lastmod>2020-06-24T19:42:27+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/blog/legacy/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/blog/legacy/</loc>
     <lastmod>2020-06-03T11:07:10+06:00</lastmod>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/faq/</loc>
-    <lastmod>2020-03-23T13:05:29+06:00</lastmod>
+    <loc>https://mrchapl1n-cyber.github.io/project/detect-2019/</loc>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/project/detect-2019/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/about/</loc>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/author/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/project/picade/</loc>
   </url>
   
   <url>
-    <loc>http://192.168.1.191/about/</loc>
-  </url>
-  
-  <url>
-    <loc>http://192.168.1.191/contact/</loc>
-  </url>
-  
-  <url>
-    <loc>http://192.168.1.191/author/john-doe/</loc>
-  </url>
-  
-  <url>
-    <loc>http://192.168.1.191/author/mark-dinn/</loc>
-  </url>
-  
-  <url>
-    <loc>http://192.168.1.191/pricing/</loc>
-  </url>
-  
-  <url>
-    <loc>http://192.168.1.191/project/picade/</loc>
-  </url>
-  
-  <url>
-    <loc>http://192.168.1.191/service/</loc>
-  </url>
-  
-  <url>
-    <loc>http://192.168.1.191/project/</loc>
+    <loc>https://mrchapl1n-cyber.github.io/project/</loc>
   </url>
   
 </urlset>

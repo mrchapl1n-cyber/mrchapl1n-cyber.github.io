@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Chapl1n</title>
-    <link>http://192.168.1.191/categories/</link>
+    <link>https://mrchapl1n-cyber.github.io/categories/</link>
     <description>Recent content in Categories on Chapl1n</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright &amp;copy; 2020 [Themefisher](https://themefisher.com) All Rights Reserved</copyright>
     <lastBuildDate>Fri, 04 Sep 2020 12:40:03 +0100</lastBuildDate>
     
-	<atom:link href="http://192.168.1.191/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://mrchapl1n-cyber.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>HackTheBox</title>
-      <link>http://192.168.1.191/categories/hackthebox/</link>
+      <link>https://mrchapl1n-cyber.github.io/categories/hackthebox/</link>
       <pubDate>Fri, 04 Sep 2020 12:40:03 +0100</pubDate>
       
-      <guid>http://192.168.1.191/categories/hackthebox/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/categories/hackthebox/</guid>
       <description></description>
     </item>
     

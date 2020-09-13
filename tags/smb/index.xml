@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Smb on Chapl1n</title>
-    <link>http://192.168.1.191/tags/smb/</link>
+    <link>https://mrchapl1n-cyber.github.io/tags/smb/</link>
     <description>Recent content in Smb on Chapl1n</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright &amp;copy; 2020 [Themefisher](https://themefisher.com) All Rights Reserved</copyright>
     <lastBuildDate>Sat, 11 Jul 2020 10:48:40 +0100</lastBuildDate>
     
-	<atom:link href="http://192.168.1.191/tags/smb/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://mrchapl1n-cyber.github.io/tags/smb/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Blue HackTheBox - Write-Up</title>
-      <link>http://192.168.1.191/blog/blue/</link>
+      <link>https://mrchapl1n-cyber.github.io/blog/blue/</link>
       <pubDate>Sat, 11 Jul 2020 10:48:40 +0100</pubDate>
       
-      <guid>http://192.168.1.191/blog/blue/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/blog/blue/</guid>
       <description>This blog piece details my approach for pwning the HackTheBox machine called Blue. As per usual for my HackTheBox writeups, I will try to pwn Blue with and without Metasploit.</description>
     </item>
     
     <item>
       <title>Legacy HackTheBox - Write-Up</title>
-      <link>http://192.168.1.191/blog/legacy/</link>
+      <link>https://mrchapl1n-cyber.github.io/blog/legacy/</link>
       <pubDate>Wed, 03 Jun 2020 11:07:10 +0600</pubDate>
       
-      <guid>http://192.168.1.191/blog/legacy/</guid>
+      <guid>https://mrchapl1n-cyber.github.io/blog/legacy/</guid>
       <description>The HackTheBox machine Legacy represents the start of my journey into the field of ethical hacking. As I progress through these pieces I will explain my approach through each of the phases of a pen test.</description>
     </item>
     
